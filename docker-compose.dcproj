@@ -9,6 +9,7 @@
     <DockerServiceName>jusilms</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
