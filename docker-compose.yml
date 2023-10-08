@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: jusi
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - 5432:5432
+    
+  jusilms:
+    image: ${DOCKER_REGISTRY-}jusilms
+    build:
+      context: .
+      dockerfile: JusiLms/Dockerfile
