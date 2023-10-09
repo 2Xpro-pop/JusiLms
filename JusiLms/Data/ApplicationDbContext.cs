@@ -8,6 +8,11 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     public DbSet<Category> Categories
     {
         get; set;
+    } 
+    
+    public DbSet<Lesson> Lessons
+    {
+        get; set;
     }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

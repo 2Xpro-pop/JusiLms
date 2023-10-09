@@ -1,0 +1,66 @@
+﻿@page "/category/{Id:guid}"
+
+@inject ICategoryService CategoryService
+@inject ILessonsService LessonsService
+@inject NavigationManager NavigationManager
+
+@if (_category == null && !_notFound)
+{
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+    return;
+}
+
+@if (_notFound)
+{
+    <MudText Typo="Typo.h2">Not found :^(</MudText>
+    return;
+}
+
+<MudText Typo="Typo.h3" Class="mt-4">@_category!.Name</MudText>
+<MudDivider Light=true Class="mb-4" />
+
+<div class="row justify-content-evenly align-self-stretch">
+    @foreach (var lesson in _lessons)
+    {
+        <div class="col-md-4 d-flex justify-content-center align-items-stretch p-4">
+            <MudButton Class=" p-0 w-100 inner-label-w100" OnClick=@(_ => NavigationManager.NavigateTo($"lesson/{lesson.Id}"))>
+                <MudCard Class="w-100 h-100 text-white">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6" GutterBottom=true>@lesson.Header</MudText>
+                        <MudText>@lesson.Description</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudButton>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private bool _notFound;
+    private Category? _category;
+
+    private IEnumerable<Lesson> _lessons = Array.Empty<Lesson>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _category = await CategoryService.GetCategory(Id);
+        _notFound = _category == null;
+
+        if (_category == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _lessons = await LessonsService.GetLessonsByCategory(_category.Id);
+        }
+        catch
+        {
+            _lessons = Array.Empty<Lesson>();
+        }
+    }
+}
