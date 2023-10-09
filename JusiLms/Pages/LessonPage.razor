@@ -1,0 +1,49 @@
+﻿@page "/lesson/{Id:guid}"
+
+@inject ILessonsService LessonsService
+
+@if (_lessons == null && !_notFound)
+{
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+    return;
+}
+
+@if (_notFound)
+{
+    <MudText Typo="Typo.h2">Not found :^(</MudText>
+    return;
+}
+
+<MudText Typo="Typo.h3" Class="mt-4">@_lessons!.Header</MudText>
+<MudDivider Light=true Class="mb-4" />
+
+<div class="row mb-3">
+    <div class="col-md-6 col-12">
+        <div class="videoWrapper ">
+            <iframe width="560" height="500"
+                    src="@_lessons.YoutubeUrl"
+                    title="YouTube video player"
+                    frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture">
+                >
+            </iframe>
+        </div>
+    </div>
+
+</div>
+
+
+<MudText>@_lessons.Description</MudText>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private bool _notFound;
+    private Lesson? _lessons;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _lessons = await LessonsService.GetLessonById(Id);
+        _notFound = _lessons == null;
+    }
+}
