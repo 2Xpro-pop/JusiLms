@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using JusiLms.Shared;
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Components.Web
 @namespace JusiLms.Pages
@@ -15,6 +16,8 @@
     <link href="css/site.css" rel="stylesheet" />
     <link href="JusiLms.styles.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
@@ -31,6 +34,9 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <component type="typeof(Footer)" render-mode="Static" />
+
     <script src="_framework/blazor.server.js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 </body>
 </html>
