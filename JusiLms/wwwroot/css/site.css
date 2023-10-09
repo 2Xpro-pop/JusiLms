@@ -175,13 +175,9 @@ footer {
 }
 
 .shifu-button {
-    border-radius: 25px;
+    border-radius: 25px !important;
     background: linear-gradient(91deg, #EDCA9D 6.78%, #FCE8CF 48.36%, #EDCA9D 97.24%);
     filter: drop-shadow(0px 4px 13px rgba(0, 0, 0, 0.50));
-    border: none;
-}
-
-.shifu-button {
     color: #5E5941;
     font-size: 30.338px;
     font-style: normal;
@@ -207,12 +203,30 @@ footer {
     font-family: Avante;
 }
 
+.heroshima {
+    font-family: Hiroshima Regular;
+}
+
 .shifu-input {
     font-family: Avante;
-    border-radius: 10px;
+    border-radius: 10px !important;
     background: #D9D9D9;
+}
+
+.home-bg {
+    background-image: url("../MainFon.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: calc(100vh - var(--mud-appbar-height));
 }
 
 main {
     flex: 1;
+}
+
+@media (max-width: 600px ) {
+    .home-bg {
+        height: calc(101.11vh - var(--mud-appbar-height));
+    }
 }

@@ -50,6 +50,7 @@ builder.Services.AddControllers().AddOData(o =>
 });
 
 builder.Services.AddTransient<IInitializeService, InitializeService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 builder.Services.AddMudServices();
 

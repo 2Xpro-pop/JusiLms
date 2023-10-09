@@ -1,21 +1,122 @@
 ﻿@page "/"
 
+@layout IndexLayout
+
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
 <PageTitle>Уроки</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-bg text-center">
+    <h1 class="heroshima">insta.shifu</h1>
 
-Welcome to your new app.
+    <h2>SMM/SMD/BLOGGING</h2>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <div class="jusi">
+        <img src="/jusi.png" />
+    </div>
+</div>
+
+<footer class="footer px-0 py-3">
+
+    <div class="row px-0">
+        <div class="col-2">
+            <img class="w-100 h-100 cloud object-position-right" src="/cloud.svg" />
+        </div>
+        <div class="col-8 d-flex text-center justify-content-center align-items-center">
+            <h3 class="avante my-0 p-0">Самые популярные вопросы:</h3>
+        </div>
+        <div class="col-2">
+            <img class="w-100 h-100 cloud object-position-left" src="/cloud-l.svg" />
+        </div>
+    </div>
+
+</footer>
+
+<div class="row justify-content-center align-items-stretch w-100 mb-5">
+
+    <div class="p-5 col-md-6 col-lg-4">
+        <div class="card-container h-100">
+            <div class="card h-100">
+                <h4 class="avante">Когда урок?</h4>
+                <p>Уроки выходят ежедневно- кроме воскресенья, чтобы вы успевали делать домашние задания. Расписание будет постепенно вывешиваться в инфо канале курса, следите за обновлениями!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-5 col-md-6 col-lg-4">
+        <div class="card-container h-100">
+            <div class="card h-100">
+                <h4 class="avante">
+                    У меня нет идей,
+                    где взять?
+                </h4>
+                <p>
+                    ТГ-канал с фишками, лайфхаками, туториалами для сторис и не только!
+                    <br />
+                    <br />
+                    Все для вас, моря и океаны!
+
+                </p>
+                <MudButton Class="shifu-button">вступить в ТГ-канал</MudButton>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-5 col-md-6 col-lg-4">
+        <div class="card-container h-100">
+            <div class="card h-100">
+                <h4 class="avante">
+                    У меня нет идей,
+                    где взять?
+                </h4>
+                <p>
+                    Здесь вы найдете себе сильное окружение, единомышленников и, конечно же, меня!
+                    Не стесняйтесь писать в личку, всех жду и обнимаю!
+                </p>
+                <MudButton Class="shifu-button">Вступить в группу</MudButton>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9 col-lg-6">
+        <img class="w-100" src="/modules.svg" />
+    </div>
+
+</div>
+
+<div class="row justify-content-center align-items-stretch w-100 mb-5 p-5 modules">
+    @foreach(var category in _categories)
+    {
+        <div class="col-3 col-md-2 align-items-center d-flex">
+            <img class="h-100" src="@category.Icon"/>
+        </div>
+        <div class="col-9 col-md-10 category-card position-relative mud-ripple"
+        @onclick=@(_ => NavigationManager.NavigateTo($"category/{category.Id}"))>
+
+            <img src="/left-corner.png" class="l-corner" />
+            <img src="/right-corner.png" class="r-corner" />
+
+            <div class="pad">
+                <h4 class="avante">@category.Name</h4>
+                <p>@category.Description</p>
+            </div>
+
+            
+        </div>
+
+        
+    }
+    
+</div>
+
+@code {
+    private IEnumerable<Category> _categories = Array.Empty<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CategoryService.GetCategories();
+    }
+
+
+}

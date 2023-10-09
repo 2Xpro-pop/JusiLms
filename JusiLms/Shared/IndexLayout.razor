@@ -2,24 +2,13 @@
 
 <PageTitle>JusiLms</PageTitle>
 
-<MudLayout>
-    <MudAppBar Elevation="26" Class="roofed-nav">
-        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
-        <MudSpacer />
-        <MudButton Class="shifu-button">Мой кабинет</MudButton>
-        <MudButton Class="shifu-button" Href="/Identity/Account/LogOut">Выйти с аккаунта</MudButton>
-    </MudAppBar>
-    <MudMainContent Class="px-3">
-        @Body
-    </MudMainContent>
-</MudLayout>
+<MudAppBar Elevation="26" Class="roofed-nav">
+    <MudSpacer />
+    <MudButton Class="shifu-button">Мой кабинет</MudButton>
+    @*<MudButton Class="shifu-button" Href="/Identity/Account/LogOut">Выйти с аккаунта</MudButton>*@
+</MudAppBar>
 
-@code {
-    private readonly MudTheme _mainTheme = new()
-        {
-            Palette = new PaletteLight()
-            {
-                Background = "#EDCA9D"
-            }
-        };
-}
+
+<MudMainContent Class="pb-0">
+    @Body
+</MudMainContent>
