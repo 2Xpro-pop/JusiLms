@@ -1,6 +1,10 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@400;700&display=swap');
 
+* {
+    box-sizing: border-box;
+}
+
 @font-face {
     font-family: 'Hiroshima Regular';
     font-style: normal;
@@ -27,6 +31,15 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding:0;
+    margin:0;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 h1:focus {
@@ -103,7 +116,7 @@ footer {
     background-color: #5E5941;
     overflow: hidden !important;
     box-shadow: 0px 4.9728px 3.97824px 0px rgba(0, 0, 0, 0.40) inset;
-    position: absolute;
+    position: unset !important;
     bottom: 0;
     width: 100%;
     overflow: hidden;
@@ -182,10 +195,6 @@ footer {
 }
 
 .centered {
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     width: 95%;
     max-width: 720px;
 }
@@ -202,4 +211,8 @@ footer {
     font-family: Avante;
     border-radius: 10px;
     background: #D9D9D9;
+}
+
+main {
+    flex: 1;
 }

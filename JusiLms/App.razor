@@ -12,3 +12,17 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+<MudThemeProvider Theme=_mainTheme />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+@code {
+    private readonly MudTheme _mainTheme = new()
+        {
+            Palette = new PaletteLight()
+            {
+                Background = "#EDCA9D"
+            }
+        };
+}
