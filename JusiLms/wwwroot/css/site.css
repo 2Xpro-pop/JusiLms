@@ -31,8 +31,8 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    padding:0;
-    margin:0;
+    padding: 0;
+    margin: 0;
 }
 
 body {
@@ -57,7 +57,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .roofed-nav {
@@ -137,8 +137,8 @@ footer {
         -webkit-text-fill-color: transparent;
     }
 
-    footer img.cloud{
-        object-fit:cover;
+    footer img.cloud {
+        object-fit: cover;
     }
 
     footer a {
@@ -167,9 +167,10 @@ footer {
 
 
 
-.object-position-left{
+.object-position-left {
     object-position: left;
 }
+
 .object-position-right {
     object-position: right;
 }
@@ -238,9 +239,14 @@ main {
         left: 0;
         width: 100%;
         height: 100%;
+    }
 
-        @media (max-width: 600px ) {
-            .home-bg {
-                height: calc(101.11vh - var(--mud-appbar-height));
-            }
-        }
+@media (max-width: 600px ) {
+    .home-bg {
+        height: calc(101.11vh - var(--mud-appbar-height));
+    }
+}
+
+.mud-badge.mud-badge-top.right.mud-badge-overlap {
+    inset: auto auto calc(100% - 12px) calc(100% - 22px) !important;
+}

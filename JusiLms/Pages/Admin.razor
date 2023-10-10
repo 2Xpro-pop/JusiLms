@@ -1,0 +1,202 @@
+﻿@page "/admin"
+@using Microsoft.AspNetCore.Identity;
+
+@attribute [Authorize(Roles = "Admin")]
+
+@inject IUserService UserService
+@inject ICategoryService CategoryService
+@inject ILessonsService LessonsService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<div class="d-flex">
+    <div class="col-12 col-lg-4 px-4 border-end-2">
+        <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">ученики</div>
+
+        @if(_usersLoading)
+        {
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+        }
+        else
+        {
+            @foreach (var user in _users)
+            {
+                <div class="row w-100 justify-content-center align-items-stretch py-4">
+                    <div class="col-3">
+                        <MudImage Src=@user.Avatar Alt="Admin" ObjectFit=ObjectFit.Cover ObjectPosition=ObjectPosition.Center Elevation="25" Class="rounded-lg w-100 h-100" />
+                    </div>
+                    <MudBadge Class="col-9" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveUser(user))">
+                        <div class="px-2 py-1 avante dark-card cursor-pointer">
+                            <MudText Typo="Typo.h5" Class="avante text-white">@user.FullName</MudText>
+                            <MudText Typo="Typo.h6" Class="avante text-white">@GetLastActivity(user)</MudText>
+                        </div>
+                    </MudBadge>
+
+                </div>
+
+                
+            }
+
+            <MudButton Class="shifu-button col-11 avante" OnClick="OpenUserAddDialog">Добавить ученика</MudButton>
+
+        }
+        
+        
+    </div>
+    <div class="col-12 col-lg-4 px-4">
+    </div>
+    <div class="col-12 col-lg-4 px-4">
+    </div>
+</div>
+
+@code {
+    private bool _usersLoading;
+    private bool _categoriesLoading;
+    private string? _searchUsers;
+    private string? _searchCategories;
+    private IEnumerable<User> _users = Array.Empty<User>();
+    private IEnumerable<Category> _categories = Array.Empty<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _users = await UserService.GetAllUsers();
+        _categories = await CategoryService.GetCategories();
+    }
+
+    public async Task OpenUserAddDialog()
+    {
+        var reference = await DialogService.ShowAsync<AddUserDialog>();
+        var result = await reference.Result;
+
+        if (result.Data is IEnumerable<User> usersForAdd)
+        {
+            try
+            {
+                _usersLoading = true;
+                this.StateHasChanged();
+                await Task.Delay(2000);
+                await UserService.AddUsers(usersForAdd);
+                _users = await UserService.GetAllUsers();
+                _usersLoading = false;
+                this.StateHasChanged();
+                Snackbar.Add("Пользователи добавлены!", Severity.Success);
+            }
+            catch
+            {
+                Snackbar.Add("Произошла ошибка!", Severity.Error);
+            }
+            finally
+            {
+                _usersLoading = false;
+            }
+        }
+    }
+
+    public async Task RemoveUser(User user)
+    {
+        if (user.Id == "1")
+        {
+            await DialogService.ShowMessageBox("Йоу, это админ", "Его нельзя удалять", "Ладно(");
+            return;
+        }
+        _usersLoading = true;
+        this.StateHasChanged();
+        try
+        {
+            await UserService.DeleteUser(user);
+            await Task.Delay(2000);
+            _users = await UserService.GetAllUsers();
+            _usersLoading = false;
+            this.StateHasChanged();
+            Snackbar.Add("Пользователь удален!", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("Произошла ошибка!", Severity.Error);
+        }
+        finally
+        {
+            _usersLoading = false;
+        }
+    }
+
+    public async Task OpenCategoryAddDialog()
+    {
+        var reference = await DialogService.ShowAsync<AddCategoryDialog>();
+        var result = await reference.Result;
+
+        if (result.Data is Category category)
+        {
+            try
+            {
+                _categoriesLoading = true;
+                this.StateHasChanged();
+                await Task.Delay(2000);
+                await CategoryService.AddCategory(category);
+                _categories = await CategoryService.GetCategories();
+                _categoriesLoading = false;
+                this.StateHasChanged();
+                Snackbar.Add("Категория добавлена!", Severity.Success);
+            }
+            catch
+            {
+                Snackbar.Add("Произошла ошибка!", Severity.Error);
+            }
+            finally
+            {
+                _categoriesLoading = false;
+            }
+        }
+    }
+
+    public async Task RemoveCategory(Category category)
+    {
+        _categoriesLoading = true;
+        this.StateHasChanged();
+        try
+        {
+            await CategoryService.DeleteCategory(category);
+            await Task.Delay(2000);
+            _categories = await CategoryService.GetCategories();
+            _categoriesLoading = false;
+            this.StateHasChanged();
+            Snackbar.Add("Категория удалена!", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("Произошла ошибка!", Severity.Error);
+        }
+        finally
+        {
+            _categoriesLoading = false;
+        }
+    }
+
+    private string GetLastActivity(User user)
+    {
+        if (TrackingCircuitHandler.Users.Contains(user.Id))
+        {
+            return "онлайн";
+        }
+
+        var delta = DateTime.UtcNow - user.LastActivity;
+
+        if(user.LastActivity == DateTime.MinValue)
+        {
+            return $"Был(а) в сети никогда";
+        }
+
+        if (delta.TotalHours < 1)
+        {
+            return $"Был(а) в сети {(int)delta.TotalMinutes} минут назад";
+        }
+
+        if (delta.TotalHours < 24)
+        {
+            return $"Был(а) в сети {(int)delta.TotalMinutes} часов назад";
+        }
+
+        return $"Был(а) в сети {(int)delta.TotalDays} дней назад";
+    }
+}

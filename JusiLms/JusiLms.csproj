@@ -7,13 +7,16 @@
     <UserSecretsId>aspnet-JusiLms-0d203a68-c6e7-41e5-9daa-40b4a7ef60e8</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <RazorLanguageVersion>7</RazorLanguageVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\Admin.razor.css" />
     <None Remove="Pages\Index.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Pages\Admin.razor.css" />
     <Content Include="Pages\Index.razor.css" />
   </ItemGroup>
 
@@ -33,5 +36,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.3" />
   </ItemGroup>
+
+  
 
 </Project>

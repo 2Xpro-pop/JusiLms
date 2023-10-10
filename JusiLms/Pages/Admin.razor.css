@@ -1,0 +1,20 @@
+﻿.header-container {
+    width: 220px;
+    font-size: 1.92em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+.dark-card {
+    border-radius: 10px;
+    background: #5E5941;
+}
+
+.border-end-2 {
+    border-right: 1px solid black;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}

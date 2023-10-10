@@ -4,7 +4,16 @@
 
 <MudAppBar Elevation="26" Class="roofed-nav">
     <MudSpacer />
-    <MudButton Class="shifu-button">Мой кабинет</MudButton>
+    <AuthorizeView>
+        @if (context.User.IsInRole("Admin"))
+        {
+            <MudButton Class="shifu-button" Href="/Admin">Мой кабинет</MudButton>
+        }
+        else
+        {
+            <MudButton Class="shifu-button" Href="/Account">Мой кабинет</MudButton>
+        }
+    </AuthorizeView>
     @*<MudButton Class="shifu-button" Href="/Identity/Account/LogOut">Выйти с аккаунта</MudButton>*@
 </MudAppBar>
 

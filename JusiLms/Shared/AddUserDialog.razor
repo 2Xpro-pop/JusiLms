@@ -1,0 +1,138 @@
+﻿@using System.Text.RegularExpressions;
+@inject IFileService FileService
+<MudDialog Class="bg-white" Options="_options">
+    <DialogContent>
+        <MudNumericField @bind-Value:get=_countForAdd @bind-Value:set=SetCountForAdd Min=1 Max=25 Label="Количество участников" />
+        @{
+            var iter = 0;
+        }
+        @foreach (var user in _usersForAdd)
+        {
+            iter++;
+
+            <MudCard Outlined=true @key=user Class="my-3 bg-white w-100">
+
+                <MudCardContent>
+
+                    <MudForm @ref=forms[user]>
+                        @if (!string.IsNullOrWhiteSpace(user.Avatar))
+                        {
+                            <MudBadge BadgeClass="cursor-pointer" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveAvatar(user))">
+                                <MudImage ObjectFit="ObjectFit.Cover"
+                                          ObjectPosition="ObjectPosition.Center"
+                                          Src="@user.Avatar"
+                                          Width="148"
+                                          Height="200" />
+                            </MudBadge>
+                        }
+                        else
+                        {
+                            <MudFileUpload T="IBrowserFile" OnFilesChanged="@(args => UploadFile(user, args))">
+                                <ButtonTemplate>
+                                    <MudButton HtmlTag="label"
+                                               Variant="Variant.Filled"
+                                               Color="Color.Primary"
+                                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                                               for="@context">
+                                        Загрузить Аватарку
+                                    </MudButton>
+                                </ButtonTemplate>
+                            </MudFileUpload>
+                        }
+
+                        <MudTextField @bind-Value=@user.Name Label="Логин"
+                                      Required=true
+                                      RequiredError="Логин необходим" Class="mt-0" />
+                        <MudTextField @bind-Value=@user.FullName Label="ФИО"
+                                      Required=true
+                                      RequiredError="ФИО необходимо" Class="mt-0" />
+                        <MudTextField @bind-Value=@user.Email Label="Email"
+                                      Required=true
+                                      RequiredError="Email необходим" />
+                        <MudTextField @bind-Value=@user.Password Label="Пароль" Validation="@(new Func<string, string>(x => PasswordStrength(x).FirstOrDefault()))" />
+
+                    </MudForm>
+
+                </MudCardContent>
+            </MudCard>
+            if (iter == _countForAdd) break;
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Отмена</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    private readonly Dictionary<User, MudForm> forms = new();
+
+    private readonly string _specials = "#$@!%^&*()";
+
+    private readonly DialogOptions _options = new()
+        {
+            MaxWidth = MaxWidth.Large
+        };
+
+    private List<User> _usersForAdd = new()
+    {
+        new(),
+    };
+    private int _countForAdd = 1;
+
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void SetCountForAdd(int value)
+    {
+        if (value >= _usersForAdd.Count)
+        {
+            for (var i = 0; i <= value - _usersForAdd.Count; i++)
+            {
+                _usersForAdd.Add(new());
+            }
+        }
+        _countForAdd = value;
+    }
+
+    async Task Submit()
+    {
+        if (forms.Values.Any(x => !x.IsValid))
+        {
+            foreach (var task in forms.Values.Select(x => x.Validate())) await task;
+            return;
+        }
+        MudDialog.Close(_usersForAdd.Where(x => !string.IsNullOrWhiteSpace(x.Name) && !string.IsNullOrWhiteSpace(x.Email)).Take(_countForAdd));
+    }
+    void Cancel() => MudDialog.Cancel();
+
+    private async Task UploadFile(User user, InputFileChangeEventArgs args)
+    {
+        user.Avatar = await FileService.UploadFile(args.File);
+    }
+
+    private async Task RemoveAvatar(User user)
+    {
+        await FileService.RemoveFile(user.Avatar);
+    }
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Пароль обязателен!";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return "Пароль должен содержать минимум 8 символов";
+        if (!Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Пароль должен содержать минимум 1 заглавную букву";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Пароль должен содержать минимум 1 маленькую букву";
+        if (!pw.Any(x => _specials.Contains(x)))
+            yield return $"Пароль должен содержать минимум один из этих символов {_specials}";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Пароль должен содержать минимум 1 цифру";
+    }
+}

@@ -89,7 +89,7 @@
     @foreach(var category in _categories)
     {
         <div class="col-3 col-md-2 align-items-center d-flex">
-            <img class="h-100" src="@category.Icon"/>
+            <MudImage ObjectFit="ObjectFit.Contain" ObjectPosition=ObjectPosition.Center Class="h-100 w-100" src="@category.Icon"/>
         </div>
         <div class="col-9 col-md-10 category-card position-relative mud-ripple"
         @onclick=@(_ => NavigationManager.NavigateTo($"category/{category.Id}"))>

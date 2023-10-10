@@ -1,9 +1,11 @@
+using System.Configuration;
 using JusiLms.Areas.Identity;
 using JusiLms.Data;
 using JusiLms.Models;
 using JusiLms.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -18,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString), contextLifetime: ServiceLifetime.Transient);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddIdentity<User, Role>(options =>
@@ -37,6 +39,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<CircuitHandler, TrackingCircuitHandler>();
 
 builder.Services.AddControllers().AddOData(o =>
 {
@@ -52,6 +55,10 @@ builder.Services.AddControllers().AddOData(o =>
 builder.Services.AddTransient<IInitializeService, InitializeService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ILessonsService, LessonsService>();
+builder.Services.AddTransient<IUserService, UserService>();
+
+builder.Services.Configure<FileServiceOptions>(builder.Configuration.GetSection(nameof(FileServiceOptions)));
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddMudServices();
 

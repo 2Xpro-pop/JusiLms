@@ -5,8 +5,17 @@ using Microsoft.AspNetCore.Identity;
 
 namespace JusiLms.Models;
 
-public class User: IdentityUser
+public class User : IdentityUser
 {
+    public string? Avatar
+    {
+        get; set;
+    }
+    public DateTime LastActivity
+    {
+        get; set;
+    } = DateTime.MinValue;
+
     [JsonIgnore, IgnoreDataMember]
     public override string PasswordHash
     {
@@ -38,7 +47,13 @@ public class User: IdentityUser
         }
     }
 
-    public ICollection<Role> Roles
+    public string? FullName
+    {
+        get;
+        set;
+    } = "Lara";
+
+    public virtual ICollection<Role> Roles
     {
         get; set;
     }

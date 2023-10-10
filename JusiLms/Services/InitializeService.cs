@@ -55,6 +55,7 @@ public class InitializeService : IInitializeService
 
         var admin = new User()
         {
+            Id = "1",
             UserName = "admin",
         };
 
