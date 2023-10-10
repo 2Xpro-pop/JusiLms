@@ -1,0 +1,43 @@
+﻿.header-container {
+    width: 355px;
+    font-size: 1.92em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+.dark-card {
+    border-radius: 10px;
+    background: #5E5941;
+}
+
+.dark-text {
+    color: #5E5941;
+}
+
+.grey-card {
+    background: #AEAEAE;
+    color: #808080;
+}
+
+.grey-text {
+    color: #808080;
+}
+
+.border-end-2 {
+    border-right: 1px solid black;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+@media (max-width: 992px ) {
+    .border-end-2 {
+        border-right: none;
+    }
+}
+
+.radius {
+    border-radius: 10px;
+}
