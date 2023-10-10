@@ -1,5 +1,69 @@
-﻿<h3>AddCategory</h3>
+﻿@inject IFileService FileService
+
+<MudDialog Class="bg-white">
+    <DialogContent>
+        @if (!string.IsNullOrWhiteSpace(_category.Icon))
+        {
+            <MudBadge BadgeClass="cursor-pointer" Class="my-3" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="RemoveAvatar">
+                <MudImage ObjectFit="ObjectFit.Cover"
+                          ObjectPosition="ObjectPosition.Center"
+                          Src="@_category.Icon"
+                          Width="148"
+                          Height="200" />
+            </MudBadge>
+        }
+        else
+        {
+            <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFile">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context">
+                        Загрузить Аватарку
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+        }
+
+        <MudTextField Label="Имя" Class="my-3" @bind-Value=_category.Name />
+        <MudTextField Label="Описание" Class="my-3" @bind-Value=_category.Description />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Отмена</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
+    private Category _category = new();
 
+    private string[] _colors = new[]
+    {
+        "Default",
+        "Primary",
+        "Secondary",
+        "Success",
+        "Info",
+        "Warning",
+        "Error",
+        "Dark"
+    };
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(_category));
+    void Cancel() => MudDialog.Cancel();
+
+    private async Task UploadFile(InputFileChangeEventArgs args)
+    {
+        _category.Icon = await FileService.UploadFile(args.File);
+    }
+
+    private async Task RemoveAvatar()
+    {
+        await FileService.RemoveFile(_category.Icon);
+        _category.Icon = "";
+    }
 }

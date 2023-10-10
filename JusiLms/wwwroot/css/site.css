@@ -250,3 +250,7 @@ main {
 .mud-badge.mud-badge-top.right.mud-badge-overlap {
     inset: auto auto calc(100% - 12px) calc(100% - 22px) !important;
 }
+
+.surface-color {
+    background-color: #C2654F !important;
+}

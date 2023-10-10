@@ -88,10 +88,10 @@
 <div class="row justify-content-center align-items-stretch w-100 mb-5 p-5 modules">
     @foreach(var category in _categories)
     {
-        <div class="col-3 col-md-2 align-items-center d-flex">
+        <div class="col-3 col-md-2 align-items-center d-flex mb-5">
             <MudImage ObjectFit="ObjectFit.Contain" ObjectPosition=ObjectPosition.Center Class="h-100 w-100" src="@category.Icon"/>
         </div>
-        <div class="col-9 col-md-10 category-card position-relative mud-ripple"
+        <div class="col-9 col-md-10 category-card position-relative mud-ripple mb-5"
         @onclick=@(_ => NavigationManager.NavigateTo($"category/{category.Id}"))>
 
             <img src="/left-corner.png" class="l-corner" />
