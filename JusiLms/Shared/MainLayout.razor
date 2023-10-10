@@ -3,6 +3,7 @@
 <PageTitle>JusiLms</PageTitle>
 
 <MudAppBar Elevation="26" Class="roofed-nav">
+    <MudButton Variant="Variant.Text" Size=Size.Large Class="heroshima text-large text-white" Href="/">Insta Shifu</MudButton>
     <MudSpacer />
     <AuthorizeView>
         @if(context.User.IsInRole("Admin"))
@@ -13,6 +14,7 @@
         {
             <MudButton Class="shifu-button" Href="/Account">Мой кабинет</MudButton>
         }
+        <MudButton Variant="Variant.Text" Class="text-white" Href="/Identity/Account/Logout">Выход</MudButton>
     </AuthorizeView>
     
 </MudAppBar>

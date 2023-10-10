@@ -14,7 +14,7 @@
     <div class="col-12 col-lg-4 px-4 my-5 border-end-2">
         <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">ученики</div>
 
-        @if(_usersLoading)
+        @if (_usersLoading)
         {
             <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
         }
@@ -35,20 +35,20 @@
 
                 </div>
 
-                
+
             }
 
             <MudButton Class="shifu-button col-11 avante" OnClick="OpenUserAddDialog">Добавить ученика</MudButton>
 
         }
-        
-        
+
+
     </div>
     <div class="col-12 col-lg-4 px-4 my-5 border-end-2">
 
         <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">модули</div>
 
-        @if (_usersLoading)
+        @if (_categoriesLoading)
         {
             <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
         }
@@ -57,22 +57,22 @@
             var iter = 0;
             @foreach (var category in _categories)
             {
-                iter++;
                 <div class="mb-2 w-100">
                     <MudBadge Class="w-100" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveCategory(category))">
-                        <div class="row w-100 justify-content-between ml-1 px-2 py-1 avante dark-card surface-color cursor-pointer">
+                        <div class="row w-100 justify-content-between ml-1 px-2 py-1 avante dark-card surface-color cursor-pointer"
+                        @onclick=@((_) => NavigationManager.NavigateTo($"category/{category.Id}/edit"))>
                             <div class="col-1">
-                                <MudText Typo="Typo.h5" Class="avante text-white">@iter</MudText>
-                            </div>
-                            <div class="col-10 col-md-11">
-                                <MudText Typo="Typo.h5" Class="avante text-white">@category.Name</MudText>
-                                <MudText Typo="Typo.body1" Class="avante text-white">@category.Description</MudText>
-                            </div>
-                            
-                        </div>
-                    </MudBadge>
+                                <MudText Typo="Typo.h5" Class="avante text-white">@(++iter)</MudText>
+                                </div>
+                                <div class="col-10 col-md-11">
+                                    <MudText Typo="Typo.h5" Class="avante text-white">@category.Name</MudText>
+                                    <MudText Typo="Typo.body1" Class="avante text-white">@category.Description</MudText>
+                                </div>
 
-                </div>
+                            </div>
+                        </MudBadge>
+
+                    </div>
 
 
             }
@@ -218,7 +218,7 @@
 
         var delta = DateTime.UtcNow - user.LastActivity;
 
-        if(user.LastActivity == DateTime.MinValue)
+        if (user.LastActivity == DateTime.MinValue)
         {
             return $"Был(а) в сети никогда";
         }

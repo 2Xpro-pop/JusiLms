@@ -1,0 +1,19 @@
+﻿<MudDialog Class="bg-white">
+    <DialogContent>
+        <MudTextField Label="Имя" @bind-Value=_lesson.Header />
+        <MudTextField Label="Описание" @bind-Value=_lesson.Description />
+        <MudTextField Label="Ссылка на ютуб" @bind-Value=_lesson.YoutubeUrl />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Отмена</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    private Lesson _lesson = new();
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(_lesson));
+    void Cancel() => MudDialog.Cancel();
+}

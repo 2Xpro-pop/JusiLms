@@ -19,10 +19,10 @@ public class Category
         get; set;
     }
 
-    public string Icon
+    public string? Icon
     {
         get; set;
-    } = Icons.Material.Filled.Star;
+    }
 
     public string Color
     {

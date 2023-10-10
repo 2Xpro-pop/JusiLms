@@ -1,0 +1,12 @@
+﻿.dark-card-container {
+    padding: 30px 50px 30px 50px;
+}
+
+.dark-card {
+    cursor: pointer;
+    border-radius: 10px;
+    background: #C2654F;
+    padding: 50px 30px 50px 30px;
+    font-size: 1.37em;
+    text-align: center;
+}

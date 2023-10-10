@@ -1,0 +1,215 @@
+﻿@page "/category/{Id:guid}/edit"
+
+@inject ICategoryService CategoryService
+@inject ILessonsService LessonsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IFileService FileService
+
+@if (_category == null)
+{
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+    return;
+}
+
+<h2 class="avante">Модуль: @_category.Name</h2>
+
+<MudTabs Outlined=true Elevation="1" PanelClass="p-3">
+    <MudTabPanel Text="Основная информация" Class="text-white">
+        <div>
+            <MudImage Width="200" Height="200" ObjectFit=ObjectFit.Cover ObjectPosition=ObjectPosition.Center Fluid=true Src="@_category.Icon" />
+            <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFile">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context">
+                        Загрузить Аватарку
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </div>
+
+        <MudTextField Label="Имя" @bind-Value=_category.Name />
+        <MudTextField Label="Описание" @bind-Value=_category.Description />
+
+        <MudTextField Label="Количество уроков" Value="_lessons.Count()" ReadOnly=true />
+
+        <MudButton Class="shifu-button shadow mt-5" OnClick="SaveCategory">Сохранить</MudButton>
+    </MudTabPanel>
+    <MudTabPanel Text="Уроки" Class="text-white">
+
+        @if (_lessonsLoading)
+        {
+
+        }
+        else
+        {
+            <div class="row">
+                @{
+                    var iter = 0;
+                }
+                @foreach (var lesson in _lessons)
+                {
+                    <div class="col-6 col-md-4 col-lg-3 p-3 ">
+                        <div class="dark-card w-100 dark-card-container text-white avante mud-ripple">
+                            @(++iter)
+                            @lesson.Header
+                        </div>
+                    </div>
+                }
+
+                <div class="col-6 col-md-4 col-lg-3 p-3" @onclick="OpenAddLessonDialog">
+                    <div class="dark-card w-100 dark-card-container text-white avante mud-ripple">
+                        Добавить Урок +
+                    </div>
+                </div>
+
+            </div>
+        }
+
+
+
+    </MudTabPanel>
+
+
+</MudTabs>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private bool _notFound;
+    private Category? _category;
+
+    private bool _lessonsLoading;
+
+    private IEnumerable<Lesson> _lessons = Array.Empty<Lesson>();
+
+    private string[] _colors = new[]
+    {
+        "Default",
+        "Primary",
+        "Secondary",
+        "Success",
+        "Info",
+        "Warning",
+        "Error",
+        "Dark"
+    };
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _category = await CategoryService.GetCategory(Id);
+        _notFound = _category == null;
+
+        if (_category == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _lessons = await LessonsService.GetLessonsByCategory(_category.Id);
+        }
+        catch
+        {
+            _lessons = Array.Empty<Lesson>();
+        }
+    }
+
+    private async Task SaveCategory()
+    {
+        try
+        {
+            await CategoryService.UpdateCategory(_category);
+            Snackbar.Add("Сохранено", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+        }
+    }
+
+    private async Task OpenAddLessonDialog()
+    {
+        var dialog = await DialogService.ShowAsync<AddLessonDialog>();
+        var dialogResult = await dialog.Result;
+
+        if (dialogResult.Data is not Lesson lesson)
+        {
+            return;
+        }
+        lesson.CategoryId = Id;
+        _lessonsLoading = true;
+        try
+        {
+
+            await Task.Delay(2000);
+            await LessonsService.CreateLesson(lesson);
+            _lessons = await LessonsService.GetLessonsByCategory(Id);
+            _lessonsLoading = false;
+
+            this.StateHasChanged();
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+        }
+        finally
+        {
+            _lessonsLoading = false;
+        }
+    }
+
+    private async Task CommitedLessonChange(Lesson lesson)
+    {
+        _lessonsLoading = true;
+        try
+        {
+            await Task.Delay(2000);
+            await LessonsService.UpdateLesson(lesson);
+            _lessons = await LessonsService.GetLessonsByCategory(Id);
+            _lessonsLoading = false;
+
+            this.StateHasChanged();
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+        }
+        finally
+        {
+            _lessonsLoading = false;
+        }
+    }
+
+    private async Task RemoveLesson(Lesson lesson)
+    {
+        _lessonsLoading = true;
+        try
+        {
+            await Task.Delay(2000);
+            await LessonsService.DeleteLesson(lesson);
+            _lessons = await LessonsService.GetLessonsByCategory(Id);
+            _lessonsLoading = false;
+            this.StateHasChanged();
+        }
+        catch
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+        }
+        finally
+        {
+            _lessonsLoading = false;
+        }
+    }
+
+    private async Task UploadFile(InputFileChangeEventArgs args)
+    {
+        _category.Icon = await FileService.UploadFile(args.File);
+    }
+}
