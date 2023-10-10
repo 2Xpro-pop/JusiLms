@@ -1,0 +1,21 @@
+﻿<MudDialog Class="bg-white" Options=@_optiosn>
+    <DialogContent>
+        <MudTextField Label="Задание" @bind-Value=_homeWork.Details />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Отмена</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    private readonly DialogOptions _optiosn = new()
+    {
+        MaxWidth = MaxWidth.Small
+    };
+    private HomeWork _homeWork = new();
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(_homeWork));
+    void Cancel() => MudDialog.Cancel();
+}

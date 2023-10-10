@@ -56,6 +56,7 @@ builder.Services.AddTransient<IInitializeService, InitializeService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ILessonsService, LessonsService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IHomeWorksService, HomeWorkService>();
 
 builder.Services.Configure<FileServiceOptions>(builder.Configuration.GetSection(nameof(FileServiceOptions)));
 builder.Services.AddScoped<IFileService, FileService>();

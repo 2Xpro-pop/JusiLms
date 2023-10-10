@@ -22,6 +22,21 @@ namespace JusiLms.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("HomeWorkUser", b =>
+                {
+                    b.Property<Guid>("HomeWorksId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("text");
+
+                    b.HasKey("HomeWorksId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("HomeWorkUser");
+                });
+
             modelBuilder.Entity("JusiLms.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -46,6 +61,20 @@ namespace JusiLms.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("JusiLms.Models.HomeWork", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HomeWorks");
                 });
 
             modelBuilder.Entity("JusiLms.Models.Lesson", b =>
@@ -295,6 +324,21 @@ namespace JusiLms.Migrations
                     b.HasIndex("UsersId");
 
                     b.ToTable("RoleUser");
+                });
+
+            modelBuilder.Entity("HomeWorkUser", b =>
+                {
+                    b.HasOne("JusiLms.Models.HomeWork", null)
+                        .WithMany()
+                        .HasForeignKey("HomeWorksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JusiLms.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("JusiLms.Models.Lesson", b =>

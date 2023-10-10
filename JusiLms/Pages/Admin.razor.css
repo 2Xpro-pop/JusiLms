@@ -11,6 +11,11 @@
     background: #5E5941;
 }
 
+.grey-card {
+    background: #AEAEAE;
+    color: #808080;
+}
+
 .border-end-2 {
     border-right: 1px solid black;
 }
@@ -23,4 +28,8 @@
     .border-end-2 {
         border-right: none;
     }
+}
+
+.radius {
+    border-radius: 10px;
 }

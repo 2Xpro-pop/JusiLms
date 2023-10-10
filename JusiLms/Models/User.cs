@@ -51,9 +51,14 @@ public class User : IdentityUser
     {
         get;
         set;
-    } = "Lara";
+    } 
 
     public virtual ICollection<Role> Roles
+    {
+        get; set;
+    }
+
+    public virtual ICollection<HomeWork> HomeWorks
     {
         get; set;
     }

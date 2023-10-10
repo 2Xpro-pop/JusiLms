@@ -8,6 +8,7 @@
 @inject ILessonsService LessonsService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject IHomeWorksService HomeWorksService
 @inject NavigationManager NavigationManager
 
 <div class="row">
@@ -83,21 +84,56 @@
 
     </div>
     <div class="col-12 col-lg-4 px-4 my-5">
+
+        <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">дзшки</div>
+
+        @if (_homeworksLoading)
+        {
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+        }
+        else
+        {
+            var iter = 0;
+            foreach (var hw in _homeworks)
+            {
+                <div class="row w-100 justify-content-center align-items-stretch py-4">
+                    <div class="col-2 h-100 d-flex align-items-stretch justify-content-center p-1">
+                        <div class="bg-white p-1 py-3 avante radius h-100 w-100">
+                            <div class="text-center h4 m-0">
+                                @(++iter)
+                            </div>
+                        </div>
+                    </div>
+
+                    <MudBadge Class="col-10 d-flex" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
+                        <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer">
+                            <MudText Typo="Typo.h6" Class="avante">@hw.Details</MudText>
+                        </div>
+                    </MudBadge>
+                </div>
+            }
+
+            <MudButton Class="shifu-button col-11 avante mt-2" OnClick="OpenHomeWorkAddDialog">Добавить дзшку</MudButton>
+        }
+
     </div>
 </div>
 
 @code {
     private bool _usersLoading;
     private bool _categoriesLoading;
+    private bool _homeworksLoading;
     private string? _searchUsers;
     private string? _searchCategories;
     private IEnumerable<User> _users = Array.Empty<User>();
     private IEnumerable<Category> _categories = Array.Empty<Category>();
+    private IEnumerable<HomeWork> _homeworks = Array.Empty<HomeWork>();
 
     protected override async Task OnInitializedAsync()
     {
         _users = await UserService.GetAllUsers();
         _categories = await CategoryService.GetCategories();
+        _homeworks = await HomeWorksService.GetAllHomeWorks();
     }
 
     public async Task OpenUserAddDialog()
@@ -186,6 +222,35 @@
         }
     }
 
+    public async Task OpenHomeWorkAddDialog()
+    {
+        var reference = await DialogService.ShowAsync<AddHomeWorkDialog>();
+        var result = await reference.Result;
+
+        if (result.Data is HomeWork homeWork)
+        {
+            try
+            {
+                _homeworksLoading = true;
+                this.StateHasChanged();
+                await Task.Delay(2000);
+                await HomeWorksService.Create(homeWork);
+                _homeworks = await HomeWorksService.GetAllHomeWorks();
+                _homeworksLoading = false;
+                this.StateHasChanged();
+                Snackbar.Add("Дзшка добавлена!", Severity.Success);
+            }
+            catch
+            {
+                Snackbar.Add("Произошла ошибка!", Severity.Error);
+            }
+            finally
+            {
+                _homeworksLoading = false;
+            }
+        }
+    }
+
     public async Task RemoveCategory(Category category)
     {
         _categoriesLoading = true;
@@ -206,6 +271,29 @@
         finally
         {
             _categoriesLoading = false;
+        }
+    }
+    
+    public async Task RemoveHomework(HomeWork homeWork)
+    {
+        _homeworksLoading = true;
+        this.StateHasChanged();
+        try
+        {
+            await HomeWorksService.Delete(homeWork);
+            await Task.Delay(2000);
+            _homeworks = await HomeWorksService.GetAllHomeWorks();
+            _homeworksLoading = false;
+            this.StateHasChanged();
+            Snackbar.Add("Дзшка удалена!", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("Произошла ошибка!", Severity.Error);
+        }
+        finally
+        {
+            _homeworksLoading = false;
         }
     }
 
@@ -235,4 +323,4 @@
 
         return $"Был(а) в сети {(int)delta.TotalDays} дней назад";
     }
-}
+    }
