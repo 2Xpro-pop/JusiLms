@@ -156,6 +156,9 @@ namespace JusiLms.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("text");
 
+                    b.Property<string>("Insta")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("LastActivity")
                         .HasColumnType("timestamp with time zone");
 
@@ -186,12 +189,18 @@ namespace JusiLms.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
+                    b.Property<string>("Tg")
+                        .HasColumnType("text");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Wa")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

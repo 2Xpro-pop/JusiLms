@@ -53,6 +53,19 @@ public class User : IdentityUser
         set;
     } 
 
+    public string? Insta
+    {
+        get; set;
+    }
+    public string? Tg
+    {
+        get; set;
+    }
+    public string? Wa
+    {
+        get; set;
+    }
+
     public virtual ICollection<Role> Roles
     {
         get; set;

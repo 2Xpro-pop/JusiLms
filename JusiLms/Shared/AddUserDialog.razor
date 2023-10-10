@@ -50,6 +50,10 @@
                                       Required=true
                                       RequiredError="Email необходим" />
                         <MudTextField @bind-Value=@user.Password Label="Пароль" Validation="@(new Func<string, string>(x => PasswordStrength(x).FirstOrDefault()))" />
+                        <MudTextField @bind-Value=@user.Insta Label="Инста" />
+                        <MudTextField @bind-Value=@user.Tg Label="Телега" />
+                        <MudTextField @bind-Value=@user.PhoneNumber Label="Телефон" />
+                        <MudTextField @bind-Value=@user.Wa Label="номер W/A:" />
 
                     </MudForm>
 

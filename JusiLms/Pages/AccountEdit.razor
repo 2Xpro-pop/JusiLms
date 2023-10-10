@@ -25,19 +25,19 @@
         {
             <MudImage Height="182" Width="182" Src=@_user.Avatar ObjectFit="ObjectFit.Cover" Class="mb-3 radius-10 " />
             <MudText Typo="Typo.h4" Class="avante dark-text">@_user.FullName</MudText>
-            <MudText Typo="Typo.h5" Class="avante dark-text large-bottom">Диана</MudText>
+            <MudText Typo="Typo.h5" Class="avante dark-text large-bottom">@_user.Insta</MudText>
 
             <MudText Typo="Typo.h6" Class="avante grey-text">Почта:</MudText>
             <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
 
             <MudText Typo="Typo.h6" Class="avante grey-text">Ник в тг:</MudText>
-            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
+            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Tg</MudText>
 
             <MudText Typo="Typo.h6" Class="avante grey-text">Номер телефона:</MudText>
-            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
+            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.PhoneNumber</MudText>
 
             <MudText Typo="Typo.h6" Class="avante grey-text">номер W/A::</MudText>
-            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
+            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Wa</MudText>
         }
 
 
@@ -112,9 +112,9 @@
 
         _allHomeWorks = new(await HomeWorksService.GetAllHomeWorks());
 
-        IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Guid.Parse(_user.Id)) ?? _homeWorks;
+        IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Guid.Parse(_user.Id)) ?? Array.Empty<HomeWork>();
 
-        _homeWorks = exist == _homeWorks ? _homeWorks : new(exist);
+        _homeWorks = new(exist);
 
         foreach (var hw in _homeWorks)
         {
@@ -129,9 +129,9 @@
         _loading = true;
         _allHomeWorks = new(await HomeWorksService.GetAllHomeWorks());
 
-        IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Guid.Parse(_user.Id)) ?? _homeWorks;
+        IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Id) ?? Array.Empty<HomeWork>();
 
-        _homeWorks = exist == _homeWorks ? _homeWorks : new(exist);
+        _homeWorks = new(exist);
 
         foreach (var hw in _homeWorks)
         {
@@ -147,8 +147,11 @@
         {
             return;
         }
-        await HomeWorksService.RemoveHomeworkToUser(Guid.Parse(_user.Id), hw.Id);
+        this.StateHasChanged();
+        await HomeWorksService.RemoveHomeworkToUser(Id, hw.Id);
+        this.StateHasChanged();
         await Update();
+        this.StateHasChanged();
     }
 
     private async Task AddHomework(HomeWork hw)
@@ -158,7 +161,9 @@
             return;
         }
         _select.Value = null;
-        await HomeWorksService.AddHomeworkToUser(Guid.Parse(_user.Id), hw.Id);
+        await HomeWorksService.AddHomeworkToUser(Id, hw.Id);
+        this.StateHasChanged();
         await Update();
+        this.StateHasChanged();
     }
 }
