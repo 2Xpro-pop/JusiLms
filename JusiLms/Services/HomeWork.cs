@@ -13,6 +13,16 @@ public class HomeWorkService: IHomeWorksService
         _context = context;
     }
 
+    public async Task AddHomeworkToUser(Guid userId, Guid homeWorkId)
+    {
+        var user = await _context.Users.Include(x => x.HomeWorks).FirstOrDefaultAsync(x => x.Id == userId.ToString());
+        var homework = await _context.HomeWorks.FindAsync(homeWorkId);
+
+        user.HomeWorks.Add(homework);
+
+        await _context.SaveChangesAsync();
+    }
+
     public async Task Create(HomeWork work)
     {
         _context.HomeWorks.Add(work);
@@ -25,6 +35,17 @@ public class HomeWorkService: IHomeWorksService
     }
     public async Task<HomeWork?> Get(Guid id) => await _context.HomeWorks.FindAsync(id);
     public async Task<IEnumerable<HomeWork>> GetAllHomeWorks() => await _context.HomeWorks.ToArrayAsync();
+    public async Task<IEnumerable<HomeWork>?> GetUserHomeworks(Guid userId) => await _context.Users.Include(x => x.HomeWorks).Select(x => x.HomeWorks).FirstOrDefaultAsync();
+    public async Task RemoveHomeworkToUser(Guid userId, Guid homeWorkId)
+    {
+        var user = await _context.Users.Include(x => x.HomeWorks).FirstOrDefaultAsync(x => x.Id == userId.ToString());
+        var homework = await _context.HomeWorks.FindAsync(homeWorkId);
+
+        user.HomeWorks.Remove(homework);
+
+        await _context.SaveChangesAsync();
+    }
+
     public async Task Update(HomeWork work)
     {
         _context.Update(work);

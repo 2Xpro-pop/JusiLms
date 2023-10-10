@@ -1,0 +1,164 @@
+﻿@page "/user/{Id:guid}/edit"
+@using Microsoft.AspNetCore.Identity;
+
+@attribute [Authorize(Roles = "Admin")]
+
+@inject IUserService UserService
+@inject ICategoryService CategoryService
+@inject ILessonsService LessonsService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IHomeWorksService HomeWorksService
+@inject NavigationManager NavigationManager
+
+@if (_user == null) return;
+
+<div class="row">
+
+    <div class="col-12 col-lg-4 px-4 my-5 border-end-2">
+
+        @if (_loading)
+        {
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudImage Height="182" Width="182" Src=@_user.Avatar ObjectFit="ObjectFit.Cover" Class="mb-3 radius-10 " />
+            <MudText Typo="Typo.h4" Class="avante dark-text">@_user.FullName</MudText>
+            <MudText Typo="Typo.h5" Class="avante dark-text large-bottom">Диана</MudText>
+
+            <MudText Typo="Typo.h6" Class="avante grey-text">Почта:</MudText>
+            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
+
+            <MudText Typo="Typo.h6" Class="avante grey-text">Ник в тг:</MudText>
+            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
+
+            <MudText Typo="Typo.h6" Class="avante grey-text">Номер телефона:</MudText>
+            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
+
+            <MudText Typo="Typo.h6" Class="avante grey-text">номер W/A::</MudText>
+            <MudText Typo="Typo.h6" Class="avante grey-text mb-5">@_user.Email</MudText>
+        }
+
+
+    </div>
+
+    <div class="col-12 col-lg-7 px-4 my-5">
+
+        <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">Выполнение дзшки</div>
+
+        @if (_loading)
+        {
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+        }
+        else
+        {
+            var iter = 0;
+            foreach (var hw in _homeWorks)
+            {
+                <div class="row w-100 justify-content-center align-items-stretch py-4">
+                    <div class="col-2 h-100 d-flex align-items-stretch justify-content-center p-1">
+                        <div class="bg-white p-1 py-3 avante radius h-100 w-100">
+                            <div class="text-center h4 m-0">
+                                @(++iter)
+                            </div>
+                        </div>
+                    </div>
+
+                    <MudBadge Class="col-10 d-flex" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
+                        <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer">
+                            <MudText Typo="Typo.h6" Class="avante">@hw.Details</MudText>
+                        </div>
+                    </MudBadge>
+                </div>
+            }
+
+            <MudSelect T="HomeWork" Label="Добавить выполненую дзшку"
+                       Class="shifu-button col-11 avante mt-2"
+                       ListClass="bg-white"
+                       PopoverClass="avante"
+                       @ref=_select
+                       ValueChanged=AddHomework>
+                @foreach (var hw in _allHomeWorks)
+                {
+                    <MudSelectItem Value=hw Class="avante">@hw.Details</MudSelectItem>
+                }
+            </MudSelect>
+        }
+
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private User? _user;
+    private List<HomeWork> _homeWorks = new();
+    private List<HomeWork> _allHomeWorks = new();
+
+    private MudSelect<HomeWork> _select;
+
+    private bool _loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        _user = await UserService.GetUserById(Id);
+
+        if (_user == null) return;
+
+        _allHomeWorks = new(await HomeWorksService.GetAllHomeWorks());
+
+        IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Guid.Parse(_user.Id)) ?? _homeWorks;
+
+        _homeWorks = exist == _homeWorks ? _homeWorks : new(exist);
+
+        foreach (var hw in _homeWorks)
+        {
+            _allHomeWorks.Remove(hw);
+        }
+
+        _loading = false;
+    }
+
+    private async Task Update()
+    {
+        _loading = true;
+        _allHomeWorks = new(await HomeWorksService.GetAllHomeWorks());
+
+        IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Guid.Parse(_user.Id)) ?? _homeWorks;
+
+        _homeWorks = exist == _homeWorks ? _homeWorks : new(exist);
+
+        foreach (var hw in _homeWorks)
+        {
+            _allHomeWorks.Remove(hw);
+        }
+
+        _loading = false;
+    }
+
+    private async Task RemoveHomework(HomeWork hw)
+    {
+        if (!(bool)(await DialogService.ShowMessageBox("Удалить модуль", "Вы уверены?", "Да", "Нет")))
+        {
+            return;
+        }
+        await HomeWorksService.RemoveHomeworkToUser(Guid.Parse(_user.Id), hw.Id);
+        await Update();
+    }
+
+    private async Task AddHomework(HomeWork hw)
+    {
+        if(hw == null)
+        {
+            return;
+        }
+        _select.Value = null;
+        await HomeWorksService.AddHomeworkToUser(Guid.Parse(_user.Id), hw.Id);
+        await Update();
+    }
+}

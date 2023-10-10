@@ -28,7 +28,7 @@
                         <MudImage Src=@user.Avatar Alt="Admin" ObjectFit=ObjectFit.Cover ObjectPosition=ObjectPosition.Center Elevation="25" Class="rounded-lg w-100 h-100" />
                     </div>
                     <MudBadge Class="col-9" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveUser(user))">
-                        <div class="px-2 py-1 avante dark-card cursor-pointer">
+                        <div class="px-2 py-1 avante dark-card cursor-pointer" @onclick=@( _ => NavigationManager.NavigateTo($"/user/{user.Id}/edit"))>
                             <MudText Typo="Typo.h5" Class="avante text-white">@user.FullName</MudText>
                             <MudText Typo="Typo.h6" Class="avante text-white">@GetLastActivity(user)</MudText>
                         </div>
@@ -167,6 +167,10 @@
 
     public async Task RemoveUser(User user)
     {
+        if (!(bool)(await DialogService.ShowMessageBox("Удалить пользователя", "Вы уверены?", "Да", "Нет")))
+        {
+            return;
+        }
         if (user.Id == "1")
         {
             await DialogService.ShowMessageBox("Йоу, это админ", "Его нельзя удалять", "Ладно(");
@@ -253,6 +257,10 @@
 
     public async Task RemoveCategory(Category category)
     {
+        if (!(bool)(await DialogService.ShowMessageBox("Удалить модуль", "Вы уверены?", "Да", "Нет")))
+        {
+            return;
+        }
         _categoriesLoading = true;
         this.StateHasChanged();
         try
@@ -273,9 +281,13 @@
             _categoriesLoading = false;
         }
     }
-    
+
     public async Task RemoveHomework(HomeWork homeWork)
     {
+        if(!(bool)(await DialogService.ShowMessageBox("Удалить дз", "Вы уверены?", "Да", "Нет")))
+        {
+            return;
+        }
         _homeworksLoading = true;
         this.StateHasChanged();
         try
