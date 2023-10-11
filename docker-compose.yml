@@ -20,3 +20,8 @@ services:
     build:
       context: .
       dockerfile: JusiLms/Dockerfile
+    ports:
+        - 80:80
+        - 443:443
+    depends_on: 
+      - postgres
