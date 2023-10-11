@@ -54,7 +54,7 @@
                 @foreach (var lesson in _lessons)
                 {
                     <div class="col-6 col-md-4 col-lg-3 p-3 ">
-                        <div class="dark-card w-100 dark-card-container text-white avante mud-ripple">
+                        <div class="dark-card w-100 dark-card-container text-white avante mud-ripple" @onclick="@(_ =>OpenUpdateLessonDialog(lesson))">
                             @(++iter)
                             @lesson.Header
                         </div>
@@ -150,6 +150,40 @@
 
             await Task.Delay(2000);
             await LessonsService.CreateLesson(lesson);
+            _lessons = await LessonsService.GetLessonsByCategory(Id);
+            _lessonsLoading = false;
+
+            this.StateHasChanged();
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+        }
+        finally
+        {
+            _lessonsLoading = false;
+        }
+    }
+
+    private async Task OpenUpdateLessonDialog(Lesson lesson2)
+    {
+        var parameters = new DialogParameters<AddLessonDialog>();
+        parameters.Add(x => x.Lesson, lesson2);
+
+        var dialog = await DialogService.ShowAsync<AddLessonDialog>("Обновить",parameters);
+        var dialogResult = await dialog.Result;
+
+        if (dialogResult.Data is not Lesson lesson)
+        {
+            return;
+        }
+        lesson.CategoryId = Id;
+        _lessonsLoading = true;
+        try
+        {
+
+            await Task.Delay(2000);
+            await LessonsService.UpdateLesson(lesson);
             _lessons = await LessonsService.GetLessonsByCategory(Id);
             _lessonsLoading = false;
 

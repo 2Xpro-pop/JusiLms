@@ -1,7 +1,5 @@
-﻿@page "/user/{Id:guid}/edit"
+﻿@page "/user/{Id:guid}"
 @using Microsoft.AspNetCore.Identity;
-
-@attribute [Authorize(Roles = "Admin")]
 
 @inject IUserService UserService
 @inject ICategoryService CategoryService
@@ -65,25 +63,13 @@
                         </div>
                     </div>
 
-                    <MudBadge Class="col-10 d-flex" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
+                    <div Class="col-10 d-flex" >
                         <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer">
                             <MudText Typo="Typo.h6" Class="avante">@hw.Details</MudText>
                         </div>
-                    </MudBadge>
+                    </div>
                 </div>
             }
-
-            <MudSelect T="HomeWork" Label="Добавить выполненую дзшку"
-                       Class="shifu-button col-11 avante mt-2"
-                       ListClass="bg-white"
-                       PopoverClass="avante"
-            @ref=_select
-                       ValueChanged=AddHomework>
-                @foreach (var hw in _allHomeWorks)
-                {
-                    <MudSelectItem Value=hw Class="avante">@hw.Details</MudSelectItem>
-                }
-            </MudSelect>
         }
 
     </div>
@@ -97,7 +83,6 @@
 
     private User? _user;
     private List<HomeWork> _homeWorks = new();
-    private List<HomeWork> _allHomeWorks = new();
 
     private MudSelect<HomeWork> _select;
 
@@ -110,16 +95,11 @@
 
         if (_user == null) return;
 
-        _allHomeWorks = new(await HomeWorksService.GetAllHomeWorks());
 
         IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Guid.Parse(_user.Id)) ?? Array.Empty<HomeWork>();
 
         _homeWorks = new(exist);
 
-        foreach (var hw in _homeWorks)
-        {
-            _allHomeWorks.Remove(hw);
-        }
 
         _loading = false;
     }
@@ -127,43 +107,11 @@
     private async Task Update()
     {
         _loading = true;
-        _allHomeWorks = new(await HomeWorksService.GetAllHomeWorks());
 
         IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Id) ?? Array.Empty<HomeWork>();
 
         _homeWorks = new(exist);
 
-        foreach (var hw in _homeWorks)
-        {
-            _allHomeWorks.Remove(hw);
-        }
-
         _loading = false;
-    }
-
-    private async Task RemoveHomework(HomeWork hw)
-    {
-        if (!(bool)(await DialogService.ShowMessageBox("Удалить модуль", "Вы уверены?", "Да", "Нет")))
-        {
-            return;
-        }
-        this.StateHasChanged();
-        await HomeWorksService.RemoveHomeworkToUser(Id, hw.Id);
-        this.StateHasChanged();
-        await Update();
-        this.StateHasChanged();
-    }
-
-    private async Task AddHomework(HomeWork hw)
-    {
-        if (hw == null)
-        {
-            return;
-        }
-        _select.Value = null;
-        await HomeWorksService.AddHomeworkToUser(Id, hw.Id);
-        this.StateHasChanged();
-        await Update();
-        this.StateHasChanged();
     }
 }

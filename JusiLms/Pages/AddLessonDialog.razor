@@ -1,19 +1,32 @@
-﻿<MudDialog Class="bg-white">
+﻿<MudDialog Class="bg-white" >
     <DialogContent>
-        <MudTextField Label="Имя" @bind-Value=_lesson.Header />
-        <MudTextField Label="Описание" @bind-Value=_lesson.Description />
-        <MudTextField Label="Ссылка на ютуб" @bind-Value=_lesson.YoutubeUrl />
+        <MudTextField Label="Имя" @bind-Value=Lesson.Header />
+        <MudTextField Label="Ссылка на ютуб" @bind-Value=Lesson.YoutubeUrl />
+        <MudTextField Label="Описание под видео" @bind-Value=Lesson.Description Lines="5" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Отмена</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+        @if(Lesson.CategoryId != Guid.Empty)
+        {
+            <MudButton Color="Color.Primary" OnClick="Submit">Обновить</MudButton>
+        }
+        else
+        {
+            <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+        }
+
     </DialogActions>
 </MudDialog>
 @code {
-    private Lesson _lesson = new();
+    [Parameter]
+    public Lesson Lesson { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(_lesson));
+    void Submit() => MudDialog.Close(DialogResult.Ok(Lesson));
     void Cancel() => MudDialog.Cancel();
 }
