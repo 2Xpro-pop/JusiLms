@@ -108,7 +108,11 @@ builder.Services.AddScoped(services =>
     var contextAccessor = services.GetRequiredService<IHttpContextAccessor>();
     var context = contextAccessor.HttpContext;
 
-    var baseAddres = string.IsNullOrWhiteSpace(dockerApiHost) ? "http://localhost" : $"http://{dockerApiHost}";
+    var server = services.GetRequiredService<IServer>();
+    var addressFeature = server.Features.Get<IServerAddressesFeature>();
+    var baseAddress = addressFeature.Addresses.First();
+
+    var baseAddres = string.IsNullOrWhiteSpace(dockerApiHost) ? baseAddress : $"http://{dockerApiHost}";
 
     var client = services.GetRequiredService<IHttpClientFactory>().CreateClient("cookie");
     client.BaseAddress = new(baseAddres);

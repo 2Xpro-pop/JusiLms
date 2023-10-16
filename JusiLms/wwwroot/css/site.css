@@ -195,6 +195,9 @@ footer {
 .centered {
     width: 95%;
     max-width: 720px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .radius-30 {
