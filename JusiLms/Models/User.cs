@@ -17,7 +17,7 @@ public class User : IdentityUser
     } = DateTime.MinValue;
 
     [JsonIgnore, IgnoreDataMember]
-    public override string PasswordHash
+    public override string? PasswordHash
     {
         get; set;
     }
@@ -66,12 +66,12 @@ public class User : IdentityUser
         get; set;
     }
 
-    public virtual ICollection<Role> Roles
+    public virtual ICollection<Role>? Roles
     {
         get; set;
     }
 
-    public virtual ICollection<HomeWork> HomeWorks
+    public virtual ICollection<HomeWork>? HomeWorks
     {
         get; set;
     }

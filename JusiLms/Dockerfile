@@ -16,8 +16,6 @@ RUN dotnet build "JusiLms.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "JusiLms.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-ENV DOCKER_POSTGRESS_HOST postgres
-
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

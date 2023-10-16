@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.OData;
@@ -14,18 +16,38 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OData.ModelBuilder;
 using MudBlazor.Services;
+using JusiLms.Services.Api;
+using Refit;
+using JusiLms;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+var dockerPostgressConnectionString = Environment.GetEnvironmentVariable("DOCKER_POSTGRESS_CONNECTION_STRING");
+var dockerApiHost = Environment.GetEnvironmentVariable("JUSI_API_HOST");
+var runningInDockerString = Environment.GetEnvironmentVariable("RUNNING_IN_DOCKER");
+var runningInDocker = !string.IsNullOrWhiteSpace(runningInDockerString) && bool.Parse(runningInDockerString);
+
+if (!string.IsNullOrWhiteSpace(dockerPostgressConnectionString))
+{
+    connectionString = dockerPostgressConnectionString;
+}
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString), contextLifetime: ServiceLifetime.Transient);
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddIdentity<User, Role>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequiredUniqueChars = 0;
+        options.Password.RequiredLength = 4;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -63,12 +85,50 @@ builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddMudServices();
 
+/*builder.Services.AddSingleton(sp =>
+{
+    // Get the address that the app is currently running at
+    var server = sp.GetRequiredService<IServer>();
+    var addressFeature = server.Features.Get<IServerAddressesFeature>();
+    string baseAddress = addressFeature.Addresses.First();
+    return new HttpClient
+    {
+        BaseAddress = new Uri(baseAddress)
+    };
+});*/
+builder.Services.AddScoped(sp =>
+{
+    // var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    // var context = contextAccessor.HttpContext;
+
+    var baseAddres = string.IsNullOrWhiteSpace(dockerApiHost) ? "http://localhost" : $"http://{dockerApiHost}";
+
+    var client = new HttpClient
+    {
+        BaseAddress = new Uri(baseAddres),
+    };
+
+    return client;
+});
+builder.Services.AddHttpClient();
+builder.Services.AddRefitApi<IUsersApi>();
+
+if(builder.Environment.IsDevelopment())
+{
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+    });
 }
 else
 {
@@ -77,7 +137,10 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if(!runningInDocker)
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseStaticFiles();
 
