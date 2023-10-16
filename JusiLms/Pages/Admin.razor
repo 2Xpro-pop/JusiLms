@@ -4,7 +4,7 @@
 @attribute [Authorize(Roles = "Admin")]
 
 @inject IUsersApi UserService
-@inject ICategoryService CategoryService
+@inject ICategoryApi CategoryService
 @inject ILessonsService LessonsService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
@@ -132,13 +132,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _usersLoading = true;
-        this.StateHasChanged();
-        _users = await UserService.GetAllUsers();
-        _usersLoading = false;
-        this.StateHasChanged();
-        _categories = await CategoryService.GetCategories();
-        _homeworks = await HomeWorksService.GetAllHomeWorks();
+        await LoadingHelper.Load(v => _usersLoading = v, 
+            async () => _users = await UserService.GetAllUsers(), 
+            StateHasChanged);
+
+        await LoadingHelper.Load(v => _categoriesLoading = v,
+            async () => _categories = await CategoryService.GetCategories(),
+            StateHasChanged);
+
+        await LoadingHelper.Load(v => _homeworksLoading = v,
+            async () =>  _homeworks = await HomeWorksService.GetAllHomeWorks(),
+            StateHasChanged);
     }
 
     public async Task OpenUserAddDialog()
@@ -152,7 +156,6 @@
             {
                 _usersLoading = true;
                 this.StateHasChanged();
-                await Task.Delay(2000);
                 await UserService.AddUsers(usersForAdd);
                 _users = await UserService.GetAllUsers();
                 _usersLoading = false;
@@ -162,8 +165,7 @@
             catch (Refit.ValidationApiException apiExc)
             {
                 Snackbar.Add("Произошла ошибка!", Severity.Error);
-                Logger.LogException(apiExc, "Cannot add user ");
-                Logger.LogError(apiExc, "Cannot add user {RequestMessage}, {RequestMessage.Content}", apiExc.RequestMessage, await apiExc.RequestMessage.Content.ReadAsStringAsync());
+                await Logger.LogException(apiExc, "Cannot add user");
             }
             catch (Exception exc)
             {
@@ -220,12 +222,16 @@
             {
                 _categoriesLoading = true;
                 this.StateHasChanged();
-                await Task.Delay(2000);
                 await CategoryService.AddCategory(category);
                 _categories = await CategoryService.GetCategories();
                 _categoriesLoading = false;
                 this.StateHasChanged();
                 Snackbar.Add("Категория добавлена!", Severity.Success);
+            }
+            catch(Refit.ValidationApiException apiExc)
+            {
+                Snackbar.Add("Произошла ошибка!", Severity.Error);
+                await Logger.LogException(apiExc, "Cannot add category");
             }
             catch(Exception exc)
             {
@@ -250,16 +256,22 @@
             {
                 _homeworksLoading = true;
                 this.StateHasChanged();
-                await Task.Delay(2000);
                 await HomeWorksService.Create(homeWork);
                 _homeworks = await HomeWorksService.GetAllHomeWorks();
                 _homeworksLoading = false;
                 this.StateHasChanged();
                 Snackbar.Add("Дзшка добавлена!", Severity.Success);
             }
-            catch
+            catch (Refit.ValidationApiException apiExc)
             {
                 Snackbar.Add("Произошла ошибка!", Severity.Error);
+                await Logger.LogException(apiExc, "Cannot add Homework");
+
+            }
+            catch(Exception exc)
+            {
+                Snackbar.Add("Произошла ошибка!", Severity.Error);
+                Logger.LogError(exc, "Cannot add Homework");
             }
             finally
             {
