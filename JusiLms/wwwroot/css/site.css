@@ -266,6 +266,13 @@ main {
     .popular {
         font-size: 1.17em !important;
     }
+    .mud-input-label-inputcontrol {
+        font-size : 0.8rem !important;
+    }
+
+    .large-bottom {
+        margin-bottom: 1.3em !important;
+    }
 }
 
 .mud-badge.mud-badge-top.right.mud-badge-overlap {

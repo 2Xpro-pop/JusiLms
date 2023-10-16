@@ -151,6 +151,10 @@ footer h3 {
         font-size: 2.1em;
     }
 
+    h4 {
+        font-size: 1.2em;
+    }
+
     .jusi {
         position: absolute;
         left: 32%;
@@ -188,4 +192,8 @@ footer h3 {
         .jusi img {
             width: 90vw;
         }
+}
+
+.module {
+    height: 180px;
 }
