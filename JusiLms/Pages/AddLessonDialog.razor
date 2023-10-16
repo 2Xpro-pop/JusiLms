@@ -1,8 +1,11 @@
 ﻿<MudDialog Class="bg-white" >
     <DialogContent>
-        <MudTextField Label="Имя" @bind-Value=Lesson.Header />
-        <MudTextField Label="Ссылка на ютуб" @bind-Value=Lesson.YoutubeUrl />
-        <MudTextField Label="Описание под видео" @bind-Value=Lesson.Description Lines="5" />
+        <MudForm @ref=form>
+            <MudTextField Label="Имя" @bind-Value=Lesson.Header Required=true />
+            <MudTextField Label="Ссылка на ютуб" @bind-Value=Lesson.YoutubeUrl Required=true />
+            <MudTextField Label="Описание под видео" @bind-Value=Lesson.Description Lines="5" Required=true />
+        </MudForm>
+        
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Отмена</MudButton>
@@ -18,6 +21,7 @@
     </DialogActions>
 </MudDialog>
 @code {
+    private MudForm form;
     [Parameter]
     public Lesson Lesson { get; set; } = new();
 
@@ -27,6 +31,14 @@
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(Lesson));
+    private async Task Submit()
+    {
+        await form.Validate();
+        if(!form.IsValid)
+        {
+            return;
+        }
+        MudDialog.Close(DialogResult.Ok(Lesson));
+    }
     void Cancel() => MudDialog.Cancel();
 }
