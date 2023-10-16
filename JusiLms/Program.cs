@@ -113,6 +113,7 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddHttpClient();
 builder.Services.AddRefitApi<IUsersApi>();
 builder.Services.AddRefitApi<ICategoryApi>();
+builder.Services.AddRefitApi<IHomeWorksApi>();
 
 if(builder.Environment.IsDevelopment())
 {

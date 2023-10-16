@@ -1,9 +1,14 @@
 ﻿using System.Text;
+using System.Text.Json;
 
 namespace JusiLms;
 
 public static class RefitLoggerExtensions
 {
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        WriteIndented = true,
+    };
     private const string INDENT_STRING = "\t";
     public static async Task LogException(this ILogger logger, Refit.ValidationApiException exception, string log)
     {
@@ -18,21 +23,23 @@ public static class RefitLoggerExtensions
             content = string.Empty;
         }
 
-        if (string.IsNullOrWhiteSpace(content))
+        if (!string.IsNullOrWhiteSpace(content))
         {
 #pragma warning disable CA2254
             logger.LogError(exception,
-                            log+" \n Request message:\n{RequestMessage}, Content:\n{RequestMessage.Content}",
+                            log+ "\nRequest message:\n{RequestMessage}\nRequest Message Content:{RequestMessage.Content}\nResponse:\n{Content.Errors}",
                             exception.RequestMessage,
-                            content);
+                            content,
+                            JsonSerializer.Serialize(exception.Content?.Errors, _jsonOptions));
 #pragma warning restore CA2254
             return;
         }
 
 #pragma warning disable CA2254
         logger.LogError(exception,
-                            log+" \n Request message:\n{RequestMessage}",
-                            exception.RequestMessage);
+                            log+ "\nRequest message:\n{RequestMessage}\nResponse:\n{Content.Errors}",
+                            exception.RequestMessage,
+                            JsonSerializer.Serialize(exception.Content?.Errors, _jsonOptions));
 #pragma warning restore CA2254
 
     }
