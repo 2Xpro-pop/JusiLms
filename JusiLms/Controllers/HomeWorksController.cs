@@ -1,11 +1,13 @@
 ﻿using JusiLms.Models;
 using JusiLms.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JusiLms.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class HomeWorksController : ControllerBase
 {
     private readonly IHomeWorksService _homeWorksService;

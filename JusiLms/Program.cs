@@ -96,21 +96,27 @@ builder.Services.AddMudServices();
         BaseAddress = new Uri(baseAddress)
     };
 });*/
+builder.Services.AddHttpClient("cookie")
+    .ConfigurePrimaryHttpMessageHandler(() => 
+        new HttpClientHandler
+        {
+            UseCookies = true,
+            UseDefaultCredentials = true
+        });
 builder.Services.AddScoped(sp =>
 {
-    // var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-    // var context = contextAccessor.HttpContext;
+    var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var context = contextAccessor.HttpContext;
 
     var baseAddres = string.IsNullOrWhiteSpace(dockerApiHost) ? "http://localhost" : $"http://{dockerApiHost}";
 
-    var client = new HttpClient
-    {
-        BaseAddress = new Uri(baseAddres),
-    };
+    var client = sp.GetRequiredService<IHttpClientFactory>().CreateClient("cookie");
+    client.BaseAddress = new(baseAddres);
+
+    client.DefaultRequestHeaders.Add("Cookie", context.Request.Headers["Cookie"].ToString());
 
     return client;
 });
-builder.Services.AddHttpClient();
 builder.Services.AddRefitApi<IUsersApi>();
 builder.Services.AddRefitApi<ICategoryApi>();
 builder.Services.AddRefitApi<IHomeWorksApi>();

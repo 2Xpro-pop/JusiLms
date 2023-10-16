@@ -4,6 +4,7 @@
 
 @inject ICategoryApi CategoryService
 @inject NavigationManager NavigationManager
+@inject ILogger<Index> Logger
 
 <PageTitle>Уроки</PageTitle>
 
@@ -115,7 +116,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _categories = await CategoryService.GetCategories();
+        try
+        {
+            if(_categories.Any())
+            {
+                return;
+            }
+            _categories = await CategoryService.GetCategories();
+        }
+        catch(Refit.ValidationApiException apiExc)
+        {
+            await Logger.LogException(apiExc, "Cannot get categories");
+        }
+        catch (Refit.ApiException apiExc)
+        {
+            await Logger.LogException(apiExc, "Cannot get categories");
+        }
+        catch(Exception exc)
+        {
+            Logger.LogError(exc, "Cannot get categories");
+        }
     }
 
 

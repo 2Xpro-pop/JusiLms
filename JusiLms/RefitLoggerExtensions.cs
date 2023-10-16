@@ -10,36 +10,96 @@ public static class RefitLoggerExtensions
         WriteIndented = true,
     };
     private const string INDENT_STRING = "\t";
+
     public static async Task LogException(this ILogger logger, Refit.ValidationApiException exception, string log)
     {
-        string content;
+        var content = string.Empty;
+        string response;
         try
         {
-            content = await exception.RequestMessage.Content!.ReadAsStringAsync();
-            content = FormatJson(content);
+            if (exception.RequestMessage.Content != null)
+            {
+                content = await exception.RequestMessage.Content!.ReadAsStringAsync();
+                content = FormatJson(content);
+            }
         }
         catch
         {
             content = string.Empty;
         }
+        try
+        {
+            response = JsonSerializer.Serialize(exception.Content?.Errors, _jsonOptions);
+        }
+        catch
+        {
+            response = string.Empty;
+        }
+        var parameters = new List<object?>();
+        log += "\nRequest message:\n{RequestMessage}";
+        parameters.Add(exception.RequestMessage);
 
         if (!string.IsNullOrWhiteSpace(content))
         {
-#pragma warning disable CA2254
-            logger.LogError(exception,
-                            log+ "\nRequest message:\n{RequestMessage}\nRequest Message Content:{RequestMessage.Content}\nResponse:\n{Content.Errors}",
-                            exception.RequestMessage,
-                            content,
-                            JsonSerializer.Serialize(exception.Content?.Errors, _jsonOptions));
-#pragma warning restore CA2254
-            return;
+            log += "\nRequest Message Content:{RequestMessage.Content}";
+            parameters.Add(content);
+        }
+
+        if (!string.IsNullOrWhiteSpace(response))
+        {
+            log += "\nResponse:\n{Content.Errors}";
+            parameters.Add(response);
         }
 
 #pragma warning disable CA2254
-        logger.LogError(exception,
-                            log+ "\nRequest message:\n{RequestMessage}\nResponse:\n{Content.Errors}",
-                            exception.RequestMessage,
-                            JsonSerializer.Serialize(exception.Content?.Errors, _jsonOptions));
+        logger.LogError(exception,log, parameters.ToArray());
+#pragma warning restore CA2254
+
+    }
+
+    public static async Task LogException(this ILogger logger, Refit.ApiException exception, string log)
+    {
+        var content = string.Empty;
+        string response;
+        try
+        {
+            if(exception.RequestMessage.Content != null)
+            {
+                content = await exception.RequestMessage.Content!.ReadAsStringAsync();
+                content = FormatJson(content);
+            }
+            
+        }
+        catch
+        {
+            content = string.Empty;
+        }
+        try
+        {
+            response = exception.Content!;
+        }
+        catch
+        {
+            response = string.Empty;
+        }
+        var parameters = new List<object?>();
+        log += "\nRequest message:\n{RequestMessage}";
+        parameters.Add(exception.RequestMessage);
+
+        if (!string.IsNullOrWhiteSpace(content))
+        {
+            log += "\nRequest Message Content:{RequestMessage.Content}";
+            parameters.Add(content);
+        }
+
+        if (!string.IsNullOrWhiteSpace(response))
+        {
+            log += "\nResponse:\n{Content.Errors}";
+            parameters.Add(response);
+        }
+
+#pragma warning disable CA2254
+        logger.LogError(exception, log, parameters.ToArray());
 #pragma warning restore CA2254
 
     }
