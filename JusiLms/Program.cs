@@ -154,7 +154,7 @@ else
 
 if(!runningInDocker)
 {
-    app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
 }
 
 app.UseStaticFiles();

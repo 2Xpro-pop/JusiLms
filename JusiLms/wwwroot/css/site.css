@@ -262,6 +262,10 @@ main {
     .home-bg {
         height: calc(101.11vh - var(--mud-appbar-height));
     }
+
+    .popular {
+        font-size: 1.17em !important;
+    }
 }
 
 .mud-badge.mud-badge-top.right.mud-badge-overlap {
