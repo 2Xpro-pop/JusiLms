@@ -162,6 +162,7 @@
             catch (Refit.ValidationApiException apiExc)
             {
                 Snackbar.Add("Произошла ошибка!", Severity.Error);
+                Logger.LogException(apiExc, "Cannot add user ");
                 Logger.LogError(apiExc, "Cannot add user {RequestMessage}, {RequestMessage.Content}", apiExc.RequestMessage, await apiExc.RequestMessage.Content.ReadAsStringAsync());
             }
             catch (Exception exc)
