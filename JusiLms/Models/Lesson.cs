@@ -28,7 +28,6 @@ public class Lesson
     {
         get; set;
     }
-    [JsonIgnore]
     public virtual Category? Category
     {
         get; set;

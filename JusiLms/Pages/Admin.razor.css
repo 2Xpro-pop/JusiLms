@@ -16,6 +16,12 @@
     color: #808080;
 }
 
+.sector {
+    min-height: 300px;
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+
 .border-end-2 {
     border-right: 1px solid black;
 }

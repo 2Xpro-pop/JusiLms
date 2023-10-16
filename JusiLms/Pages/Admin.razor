@@ -12,8 +12,8 @@
 @inject NavigationManager NavigationManager
 @inject ILogger<Admin> Logger
 
-<div class="row">
-    <div class="col-12 col-lg-4 px-4 my-5 border-end-2">
+<div class="row align-items-stretch">
+    <div class="col-12 col-lg-4 px-4 my-5 border-end-2 sector">
         <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">ученики</div>
 
         @if (_usersLoading)
@@ -46,7 +46,7 @@
 
 
     </div>
-    <div class="col-12 col-lg-4 px-4 my-5 border-end-2">
+    <div class="col-12 col-lg-4 px-4 my-5 border-end-2 sector">
 
         <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">модули</div>
 
@@ -84,7 +84,7 @@
         }
 
     </div>
-    <div class="col-12 col-lg-4 px-4 my-5">
+    <div class="col-12 col-lg-4 px-4 my-5 sector">
 
         <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">дзшки</div>
 
@@ -132,17 +132,27 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadingHelper.Load(v => _usersLoading = v, 
-            async () => _users = await UserService.GetAllUsers(), 
-            StateHasChanged);
+        if (_users == Array.Empty<User>())
+        {
+            await LoadingHelper.Load(v => _usersLoading = v,
+                async () => _users = await UserService.GetAllUsers(),
+                StateHasChanged);
+        }
 
-        await LoadingHelper.Load(v => _categoriesLoading = v,
-            async () => _categories = await CategoryService.GetCategories(),
-            StateHasChanged);
+        if (_categories == Array.Empty<Category>())
+        {
+            await LoadingHelper.Load(v => _categoriesLoading = v,
+                async () => _categories = await CategoryService.GetCategories(),
+                StateHasChanged);
+        }
 
-        await LoadingHelper.Load(v => _homeworksLoading = v,
-            async () =>  _homeworks = await HomeWorksService.GetAllHomeWorks(),
-            StateHasChanged);
+        if (_homeworks == Array.Empty<HomeWork>())
+        {
+            await LoadingHelper.Load(v => _homeworksLoading = v,
+                async () => _homeworks = await HomeWorksService.GetAllHomeWorks(),
+                StateHasChanged);
+        }
+        
     }
 
     public async Task OpenUserAddDialog()
