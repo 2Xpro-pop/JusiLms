@@ -85,10 +85,10 @@ builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddMudServices();
 
-/*builder.Services.AddSingleton(sp =>
+/*builder.Services.AddSingleton(services =>
 {
     // Get the address that the app is currently running at
-    var server = sp.GetRequiredService<IServer>();
+    var server = services.GetRequiredService<IServer>();
     var addressFeature = server.Features.Get<IServerAddressesFeature>();
     string baseAddress = addressFeature.Addresses.First();
     return new HttpClient
@@ -103,14 +103,14 @@ builder.Services.AddHttpClient("cookie")
             UseCookies = true,
             UseDefaultCredentials = true
         });
-builder.Services.AddScoped(sp =>
+builder.Services.AddScoped(services =>
 {
-    var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var contextAccessor = services.GetRequiredService<IHttpContextAccessor>();
     var context = contextAccessor.HttpContext;
 
     var baseAddres = string.IsNullOrWhiteSpace(dockerApiHost) ? "http://localhost" : $"http://{dockerApiHost}";
 
-    var client = sp.GetRequiredService<IHttpClientFactory>().CreateClient("cookie");
+    var client = services.GetRequiredService<IHttpClientFactory>().CreateClient("cookie");
     client.BaseAddress = new(baseAddres);
 
     client.DefaultRequestHeaders.Add("Cookie", context.Request.Headers["Cookie"].ToString());
@@ -120,6 +120,7 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddRefitApi<IUsersApi>();
 builder.Services.AddRefitApi<ICategoryApi>();
 builder.Services.AddRefitApi<IHomeWorksApi>();
+builder.Services.AddRefitApi<ILessonsApi>();
 
 if(builder.Environment.IsDevelopment())
 {

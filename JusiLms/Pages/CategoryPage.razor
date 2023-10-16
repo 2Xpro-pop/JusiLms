@@ -1,7 +1,7 @@
 ﻿@page "/category/{Id:guid}"
 
 @inject ICategoryService CategoryService
-@inject ILessonsService LessonsService
+@inject ILessonsApi LessonsService
 @inject NavigationManager NavigationManager
 
 @if (_category == null && !_notFound)

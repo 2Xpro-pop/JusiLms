@@ -1,6 +1,6 @@
 ﻿@page "/lesson/{Id:guid}"
 
-@inject ILessonsService LessonsService
+@inject ILessonsApi LessonsService
 
 @if (_lessons == null && !_notFound)
 {
