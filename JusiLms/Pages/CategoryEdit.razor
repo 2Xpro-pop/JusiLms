@@ -6,6 +6,14 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IFileService FileService
+@inject IYoutubeEmbedUrlCreator EmbdedUrlCreator
+@inject ILogger<CategoryEdit> Logger
+
+@if (_notFound)
+{
+    <h2 class="avante">Модуль: Не Найден :-( </h2>
+    return;
+}
 
 @if (_category == null)
 {
@@ -17,33 +25,42 @@
 
 <MudTabs Outlined=true Elevation="1" PanelClass="p-3">
     <MudTabPanel Text="Основная информация" Class="text-white">
-        <div>
-            <MudImage Width="200" Height="200" ObjectFit=ObjectFit.Cover ObjectPosition=ObjectPosition.Center Fluid=true Src="@_category.Icon" />
-            <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFile">
-                <ButtonTemplate>
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               for="@context">
-                        Загрузить Аватарку
-                    </MudButton>
-                </ButtonTemplate>
-            </MudFileUpload>
-        </div>
+        @if (_categoryLoading)
+        {
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
 
-        <MudTextField Label="Имя" @bind-Value=_category.Name />
-        <MudTextField Label="Описание" @bind-Value=_category.Description />
+        }
+        else
+        {
+            <div>
+                <MudImage Width="200" Height="200" ObjectFit=ObjectFit.Cover ObjectPosition=ObjectPosition.Center Fluid=true Src="@_category.Icon" />
+                <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFile">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="@context">
+                            Загрузить Аватарку
+                        </MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </div>
 
-        <MudTextField Label="Количество уроков" Value="_lessons.Count()" ReadOnly=true />
+            <MudTextField Label="Имя" @bind-Value=_category.Name />
+            <MudTextField Label="Описание" @bind-Value=_category.Description />
 
-        <MudButton Class="shifu-button shadow mt-5" OnClick="SaveCategory">Сохранить</MudButton>
+            <MudTextField Label="Количество уроков" Value="_lessons.Count()" ReadOnly=true />
+
+            <MudButton Class="shifu-button shadow mt-5" OnClick="SaveCategory">Сохранить</MudButton>
+        }
+        
     </MudTabPanel>
     <MudTabPanel Text="Уроки" Class="text-white">
 
         @if (_lessonsLoading)
         {
-
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
         }
         else
         {
@@ -84,6 +101,7 @@
     private bool _notFound;
     private Category? _category;
 
+    private bool _categoryLoading;
     private bool _lessonsLoading;
 
     private IEnumerable<Lesson> _lessons = Array.Empty<Lesson>();
@@ -103,14 +121,22 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _categoryLoading = true;
+        this.StateHasChanged();
+
         _category = await CategoryService.GetCategory(Id);
         _notFound = _category == null;
+
+        _categoryLoading = false;
+        this.StateHasChanged();
 
         if (_category == null)
         {
             return;
         }
 
+        _lessonsLoading = true;
+        this.StateHasChanged();
         try
         {
             _lessons = await LessonsService.GetLessonsByCategory(_category.Id);
@@ -119,18 +145,36 @@
         {
             _lessons = Array.Empty<Lesson>();
         }
+        finally
+        {
+            _lessonsLoading = false;
+        }
+        this.StateHasChanged();
     }
 
     private async Task SaveCategory()
     {
         try
         {
+            _categoryLoading = true;
+            this.StateHasChanged();
             await CategoryService.UpdateCategory(_category);
             Snackbar.Add("Сохранено", Severity.Success);
         }
-        catch
+        catch (Refit.ValidationApiException apiExc)
         {
             Snackbar.Add("Что-то пошло не так", Severity.Error);
+            await Logger.LogException(apiExc, "Category cannot update");
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            Logger.LogError(exc,"Something went wrong");
+        }
+        finally
+        {
+            _categoryLoading = false;
+            this.StateHasChanged();            
         }
     }
 
@@ -145,24 +189,32 @@
         }
         lesson.CategoryId = Id;
         _lessonsLoading = true;
+        this.StateHasChanged();
         try
         {
+            lesson.YoutubeUrl = await EmbdedUrlCreator.GetUrl(lesson.YoutubeUrl);
 
-            await Task.Delay(2000);
             await LessonsService.CreateLesson(lesson);
             _lessons = await LessonsService.GetLessonsByCategory(Id);
             _lessonsLoading = false;
 
             this.StateHasChanged();
         }
+        catch (Refit.ValidationApiException apiExc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            await Logger.LogException(apiExc, "Lessons cannot add");
+        }
         catch (Exception exc)
         {
             Snackbar.Add("Что-то пошло не так", Severity.Error);
+            Logger.LogError(exc, "Something went wrong");
         }
         finally
         {
             _lessonsLoading = false;
         }
+        this.StateHasChanged();
     }
 
     private async Task OpenUpdateLessonDialog(Lesson lesson2)
@@ -179,41 +231,24 @@
         }
         lesson.CategoryId = Id;
         _lessonsLoading = true;
+        this.StateHasChanged();
         try
         {
-
-            await Task.Delay(2000);
             await LessonsService.UpdateLesson(lesson);
             _lessons = await LessonsService.GetLessonsByCategory(Id);
             _lessonsLoading = false;
 
             this.StateHasChanged();
         }
-        catch (Exception exc)
+        catch (Refit.ValidationApiException apiExc)
         {
             Snackbar.Add("Что-то пошло не так", Severity.Error);
-        }
-        finally
-        {
-            _lessonsLoading = false;
-        }
-    }
-
-    private async Task CommitedLessonChange(Lesson lesson)
-    {
-        _lessonsLoading = true;
-        try
-        {
-            await Task.Delay(2000);
-            await LessonsService.UpdateLesson(lesson);
-            _lessons = await LessonsService.GetLessonsByCategory(Id);
-            _lessonsLoading = false;
-
-            this.StateHasChanged();
+            await Logger.LogException(apiExc, "Lessons cannot update");
         }
         catch (Exception exc)
         {
             Snackbar.Add("Что-то пошло не так", Severity.Error);
+            Logger.LogError(exc, "Something went wrong");
         }
         finally
         {
@@ -226,15 +261,25 @@
         _lessonsLoading = true;
         try
         {
-            await Task.Delay(2000);
             await LessonsService.DeleteLesson(lesson);
             _lessons = await LessonsService.GetLessonsByCategory(Id);
             _lessonsLoading = false;
             this.StateHasChanged();
         }
-        catch
+        catch (Refit.ValidationApiException apiExc)
         {
             Snackbar.Add("Что-то пошло не так", Severity.Error);
+            await Logger.LogException(apiExc, "Lessons cannot remove");
+        }
+        catch (Refit.ApiException apiExc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            await Logger.LogException(apiExc, "Lessons cannot remove");
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            Logger.LogError(exc, "Something went wrong");
         }
         finally
         {

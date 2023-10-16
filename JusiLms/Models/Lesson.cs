@@ -1,4 +1,6 @@
-﻿namespace JusiLms.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace JusiLms.Models;
 
 public class Lesson
 {
@@ -26,7 +28,8 @@ public class Lesson
     {
         get; set;
     }
-    public virtual Category Category
+    [JsonIgnore]
+    public virtual Category? Category
     {
         get; set;
     } = null!;

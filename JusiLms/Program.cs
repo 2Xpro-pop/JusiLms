@@ -128,6 +128,8 @@ if(builder.Environment.IsDevelopment())
     builder.Services.AddSwaggerGen();
 }
 
+builder.Services.AddSingleton<IYoutubeEmbedUrlCreator, YoutubeEmbedUrlCreator>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
