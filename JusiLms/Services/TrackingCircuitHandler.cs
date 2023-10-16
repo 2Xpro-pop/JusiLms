@@ -61,7 +61,7 @@ public class TrackingCircuitHandler : CircuitHandler
         await _userManager.UpdateAsync(user);
     }
 
-    public static List<string> Users
+    public static HashSet<string> Users
     {
         get;
     } = new();
