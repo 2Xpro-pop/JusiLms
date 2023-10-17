@@ -2,12 +2,40 @@
     cursor: pointer;
     border-radius: 10px;
     background: #C2654F;
-    padding: 50px 30px 50px 30px;
+    padding: 30px 20px 30px 20px;
     font-size: 1.37em;
     text-align: center;
     height: 190px;
     display: flex;
     align-content: center;
     flex-direction: column;
-    justify-content: center;
+}
+
+.pad {
+    transform: translateY(98px);
+    transition: transform 0.3s ease;
+}
+
+.dark-card:hover .pad {
+    transform: translateY(0) !important;
+}
+
+.dark-card .description {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+
+.dark-card:hover .description {
+    opacity: 1;
+}
+
+@media (max-width: 576px ) {
+    .pad {
+        transform: translateY(0) !important;
+    }
+
+    .dark-card .description {
+        opacity: 1;
+    }
 }

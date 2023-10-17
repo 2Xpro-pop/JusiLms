@@ -72,8 +72,10 @@
                 {
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 p-3 ">
                         <div class="dark-card w-100 dark-card-container text-white avante mud-ripple" @onclick="@(_ =>OpenUpdateLessonDialog(lesson))">
-                            @(++iter)
-                            @lesson.Header
+                            <div class="pad">
+                                <h6 class="mud-typography mud-typography-h6 mud-typography-gutterbottom">@lesson.Header</h6>
+                                <p class="mud-typography mud-typography-body1 description">@lesson.Description</p>
+                            </div>
                         </div>
                     </div>
                 }
