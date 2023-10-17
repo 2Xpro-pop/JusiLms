@@ -26,7 +26,7 @@ public class CategoryService : ICategoryService
 
     public async Task<IEnumerable<Category>> GetCategories()
     {
-        return await _context.Categories.ToArrayAsync();
+        return await _context.Categories.OrderBy(c => c.CreatedAt).ToArrayAsync();
     }
     public async Task<Category?> GetCategory(Guid id) => await _context.Categories.FindAsync(id);
     public async Task UpdateCategory(Category category)

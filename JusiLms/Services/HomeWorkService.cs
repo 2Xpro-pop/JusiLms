@@ -34,8 +34,18 @@ public class HomeWorkService: IHomeWorksService
         await _context.SaveChangesAsync();
     }
     public async Task<HomeWork?> Get(Guid id) => await _context.HomeWorks.FindAsync(id);
-    public async Task<IEnumerable<HomeWork>> GetAllHomeWorks() => await _context.HomeWorks.ToArrayAsync();
-    public async Task<IEnumerable<HomeWork>?> GetUserHomeworks(Guid userId) => await _context.Users.Include(x => x.HomeWorks).Where(x => x.Id == userId.ToString()).Select(x => x.HomeWorks).FirstOrDefaultAsync();
+    public async Task<IEnumerable<HomeWork>> GetAllHomeWorks() => await _context.HomeWorks.OrderBy(h => h.CreatedAt).ToArrayAsync();
+    public async Task<IEnumerable<HomeWork>?> GetUserHomeworks(Guid userId)
+    {
+        var user = await _context.Users.Include(x => x.HomeWorks).Where(x => x.Id == userId.ToString()).FirstOrDefaultAsync(); ;
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        return user.HomeWorks?.OrderBy(h => h.CreatedAt);
+    }
     public async Task RemoveHomeworkToUser(Guid userId, Guid homeWorkId)
     {
         var user = await _context.Users.Include(x => x.HomeWorks).FirstOrDefaultAsync(x => x.Id == userId.ToString());
