@@ -1,38 +1,61 @@
 ﻿@inject ICategoryApi CategoriesApi
 
-<MudDialog Class="bg-white" Options=@_optiosn>
-    <DialogContent>
-        <MudTextField Label="Задание" @bind-Value=HomeWork.Details />
-        <MudSelect Label="Выберите модуль"
-                   Class="shifu-button col-11 avante mt-2"
-                   ListClass="bg-white h6"
-                   PopoverClass="avante"
-                   @bind-Value=HomeWork.CategoryId
-                   @bind-Text=_text>
-            @foreach (var category in _categories)
+<EditForm @ref=_form Model=HomeWork>
+    <DataAnnotationsValidator />
+    <MudDialog Class="bg-white" Options=@_optiosn>
+        <DialogContent>
+            <MudTextField Label="Задание" @bind-Value=HomeWork.Details For="(() => HomeWork.Details)" />
+            <MudSelect Label="Выберите модуль"
+                       Class="shifu-button col-11 avante mt-2"
+                       ListClass="bg-white h6"
+                       PopoverClass="avante"
+            @bind-Value=HomeWork.CategoryId
+            @bind-Text=_text>
+                @foreach (var category in _categories)
+                {
+                    <MudSelectItem Value=category.Id Class="avante">@category.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <div class="d-flex flex-column">
+                <div>Сложность</div>
+                <MudRating MaxValue="3" @bind-SelectedValue=HomeWork.Difficulty />
+            </div>
+
+            @foreach (var error in _form.EditContext.GetValidationMessages(() => HomeWork.Difficulty))
             {
-                <MudSelectItem Value=category.Id Class="avante">@category.Name</MudSelectItem>
+                <MudText Color="Color.Error">@error</MudText>
             }
-        </MudSelect>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Отмена</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
-    </DialogActions>
-</MudDialog>
+
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Отмена</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+</EditForm>
 @code {
-    private string _text;
+    private EditForm _form;
+
+    private string? _text;
     private IEnumerable<Category> _categories = Array.Empty<Category>();
 
     private readonly DialogOptions _optiosn = new()
-    {
-        MaxWidth = MaxWidth.Small,
-        FullWidth = false,
-    };
+        {
+            MaxWidth = MaxWidth.Small,
+            FullWidth = false,
+        };
 
     protected override async Task OnInitializedAsync()
     {
         _categories = await CategoriesApi.GetCategories();
+
+        if (HomeWork.Id != Guid.Empty)
+        {
+            _text = _categories.Where(x => x.Id == HomeWork.CategoryId).FirstOrDefault()?.Name;
+            return;
+        }
 
         var first = _categories.FirstOrDefault();
 
@@ -40,6 +63,7 @@
 
         _text = first.Name;
         HomeWork.CategoryId = first.Id;
+        HomeWork.Difficulty = 1;
     }
 
     [Parameter]
@@ -47,6 +71,15 @@
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(HomeWork));
+    private async Task Submit()
+    {
+        if (!_form.EditContext.Validate())
+        {
+            this.StateHasChanged();
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(HomeWork));
+    }
     void Cancel() => MudDialog.Cancel();
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -10,7 +11,7 @@ public class HomeWork : TimeStampedModel
     {
         get; set;
     }
-
+    [Required(ErrorMessage = "Необходимо описание задание")]
     public string? Details
     {
         get; set;
@@ -28,6 +29,12 @@ public class HomeWork : TimeStampedModel
     }
 
     public virtual ICollection<User>? Users
+    {
+        get; set;
+    }
+
+    [Range(1, 3, ErrorMessage = "Минимальная сложность 1, а максимальная 3")]
+    public int Difficulty
     {
         get; set;
     }
