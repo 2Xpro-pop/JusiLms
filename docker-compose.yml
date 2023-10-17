@@ -15,8 +15,10 @@ services:
     ports:
       - 5432:5432
     
+    
   jusilms:
     image: ${DOCKER_REGISTRY-}jusilms
+    restart: always
     build:
       context: .
       dockerfile: JusiLms/Dockerfile
