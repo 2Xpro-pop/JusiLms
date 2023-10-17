@@ -1,6 +1,6 @@
 ﻿namespace JusiLms.Models;
 
-public class HomeWork
+public class HomeWork: TimeStampedModel
 {
     public Guid Id
     {

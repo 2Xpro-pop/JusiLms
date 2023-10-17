@@ -2,7 +2,7 @@
 
 namespace JusiLms.Models;
 
-public class Category
+public class Category: TimeStampedModel
 {
     public Guid Id
     {

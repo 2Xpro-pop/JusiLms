@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace JusiLms.Models;
 
-public class User : IdentityUser
+public class User : IdentityUser, ITimeStampedModel
 {
     public string? Avatar
     {
@@ -74,5 +74,17 @@ public class User : IdentityUser
     public virtual ICollection<HomeWork>? HomeWorks
     {
         get; set;
+    }
+    [IgnoreDataMember]
+    public DateTime CreatedAt
+    {
+        get;
+        set;
+    }
+    [IgnoreDataMember]
+    public DateTime? LastModified
+    {
+        get;
+        set;
     }
 }

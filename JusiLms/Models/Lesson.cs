@@ -2,7 +2,7 @@
 
 namespace JusiLms.Models;
 
-public class Lesson
+public class Lesson: TimeStampedModel
 {
     public Guid Id
     {
