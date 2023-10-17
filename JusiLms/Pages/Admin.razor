@@ -95,23 +95,30 @@
         else
         {
             var iter = 0;
-            foreach (var hw in _homeworks)
+            var grouped = _homeworks.GroupBy(x => x.CategoryId);
+
+            foreach (var homeWorksModule in grouped)
             {
-                <div class="row w-100 justify-content-center align-items-stretch py-4">
-                    <div class="col-2 h-100 d-flex align-items-stretch justify-content-center p-1">
-                        <div class="bg-white p-1 py-3 avante radius h-100 w-100">
-                            <div class="text-center h4 m-0">
-                                @(++iter)
+                iter++;
+                @foreach (var hw in homeWorksModule)
+                {
+                    <div class="row w-100 justify-content-center align-items-stretch py-4">
+                        <div class="col-2 h-100 d-flex align-items-stretch justify-content-center p-1">
+                            <div class="bg-white p-1 py-3 avante radius h-100 w-100">
+                                <div class="text-center h4 m-0">
+                                    @(iter)
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <MudBadge Class="col-10 d-flex" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
-                        <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer">
-                            <MudText Typo="Typo.h6" Class="avante">@hw.Details</MudText>
-                        </div>
-                    </MudBadge>
-                </div>
+                        <MudBadge Class="col-10 d-flex" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
+                            <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer">
+                                <MudText Typo="Typo.h6" Class="avante">@hw.Details</MudText>
+                            </div>
+                        </MudBadge>
+                    </div>
+                }
+                
             }
 
             <MudButton Class="shifu-button col-11 avante mt-2" OnClick="OpenHomeWorkAddDialog">Добавить дзшку</MudButton>

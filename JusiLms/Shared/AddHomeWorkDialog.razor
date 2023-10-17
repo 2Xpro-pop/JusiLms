@@ -1,6 +1,19 @@
-﻿<MudDialog Class="bg-white" Options=@_optiosn>
+﻿@inject ICategoryApi CategoriesApi
+
+<MudDialog Class="bg-white" Options=@_optiosn>
     <DialogContent>
-        <MudTextField Label="Задание" @bind-Value=_homeWork.Details />
+        <MudTextField Label="Задание" @bind-Value=HomeWork.Details />
+        <MudSelect Label="Выберите модуль"
+                   Class="shifu-button col-11 avante mt-2"
+                   ListClass="bg-white h6"
+                   PopoverClass="avante"
+                   @bind-Value=HomeWork.CategoryId
+                   @bind-Text=_text>
+            @foreach (var category in _categories)
+            {
+                <MudSelectItem Value=category.Id Class="avante">@category.Name</MudSelectItem>
+            }
+        </MudSelect>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Отмена</MudButton>
@@ -8,14 +21,32 @@
     </DialogActions>
 </MudDialog>
 @code {
+    private string _text;
+    private IEnumerable<Category> _categories = Array.Empty<Category>();
+
     private readonly DialogOptions _optiosn = new()
     {
-        MaxWidth = MaxWidth.Small
+        MaxWidth = MaxWidth.Small,
+        FullWidth = false,
     };
-    private HomeWork _homeWork = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CategoriesApi.GetCategories();
+
+        var first = _categories.FirstOrDefault();
+
+        if (first == null) return;
+
+        _text = first.Name;
+        HomeWork.CategoryId = first.Id;
+    }
+
+    [Parameter]
+    public HomeWork HomeWork { get; set; } = new();
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(_homeWork));
+    void Submit() => MudDialog.Close(DialogResult.Ok(HomeWork));
     void Cancel() => MudDialog.Cancel();
 }

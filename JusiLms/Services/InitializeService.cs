@@ -57,6 +57,7 @@ public class InitializeService : IInitializeService
         {
             Id = "1",
             UserName = "admin",
+            Avatar = "/admin.jpg"
         };
 
         var foundedAdmin = await _userManager.FindByNameAsync("admin");

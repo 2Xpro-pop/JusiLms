@@ -2,7 +2,7 @@
 
 namespace JusiLms.Models;
 
-public class Category: TimeStampedModel
+public class Category : TimeStampedModel
 {
     public Guid Id
     {
@@ -28,5 +28,10 @@ public class Category: TimeStampedModel
     {
         get; set;
     } = "Secondary";
+
+    public virtual ICollection<HomeWork>? HomeWorks
+    {
+        get; set;
+    }
 
 }

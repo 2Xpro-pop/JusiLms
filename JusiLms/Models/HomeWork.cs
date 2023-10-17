@@ -1,6 +1,10 @@
-﻿namespace JusiLms.Models;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
-public class HomeWork: TimeStampedModel
+namespace JusiLms.Models;
+
+public class HomeWork : TimeStampedModel
 {
     public Guid Id
     {
@@ -8,6 +12,17 @@ public class HomeWork: TimeStampedModel
     }
 
     public string? Details
+    {
+        get; set;
+    }
+
+    public Guid CategoryId
+    {
+        get; set;
+    }
+
+    [IgnoreDataMember, JsonIgnore]
+    public Category? Category
     {
         get; set;
     }
