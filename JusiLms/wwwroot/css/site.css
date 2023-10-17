@@ -324,15 +324,15 @@ main {
 @media (max-width: 500px )
 {
     .small-text h4 {
-        font-size: 1.1em;
+        font-size: 1.22em;
     }
 
     .small-text h5 {
-        font-size: 0.70em;
+        font-size: 0.90em;
     }
 
     .small-text h6 {
-        font-size: 0.56em;
+        font-size: 0.76em;
     }
 }
 

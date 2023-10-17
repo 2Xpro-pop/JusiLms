@@ -35,7 +35,7 @@
 }
 
 .avatar-container {
-    height:172px;
+    height: 172px;
 }
 
 .dark-card {
@@ -101,7 +101,7 @@
     }
 }
 
-@media(max-width: 500px){
+@media(max-width: 500px) {
 
     .hw {
         height: 48px;

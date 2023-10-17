@@ -57,7 +57,7 @@
 
     </div>
 
-    <div class="col-7 col-lg-6 my-3 pr-2 p-0 border-end-1">
+    <div class="col-6 col-lg-6 my-3 pr-2 p-0 border-end-1">
 
         <div class="header-container avante dark-card px-2 px-md-5 py-1 mb-2 mb-sm-4 text-white">Выполнение дзшки</div>
 
@@ -112,7 +112,7 @@
 
     </div>
 
-    <div class="col-3 col-sm-5 col-lg-2 my-3">
+    <div class="col-4 col-sm-5 col-lg-2 my-3">
         <div class="header-container avante dark-card px-2 px-md-5 py-1 mb-2 mb-sm-4 text-white" style="width:auto">Статус</div>
 
         @if (_loading)
@@ -129,10 +129,10 @@
                 iter++;
                 @foreach (var hw in homeWorksModule)
                 {
-                    <div class="row col-12 justify-content-center align-items-center py-2 py-sm-4 hw" >
-                        <div class="col-12 h-100 d-flex align-items-center justify-content-center p-1">
-                            <div class="pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
-                                <h5 class="text-center m-0 over-text">
+                    <div class="row col-12 justify-content-center align-items-center hw">
+                        <div class="col-12 h-100 d-flex align-items-center justify-content-center">
+                            <div class="avante radius h-100 w-100 small-text">
+                                <h5 class="text-center m-0 over-text" style="text-wrap: unset;">
                                     @{ var s = "";}
                                     @for(var i = 0; i < hw.Difficulty; i++)
                                     {
