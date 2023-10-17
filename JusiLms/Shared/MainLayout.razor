@@ -1,9 +1,12 @@
 ﻿@inherits LayoutComponentBase
 
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
 <PageTitle>JusiLms</PageTitle>
 
 <MudAppBar Elevation="26" Class="roofed-nav">
-    <MudButton Variant="Variant.Text" Size=Size.Large Class="heroshima text-large text-white" Href="/">Insta Shifu</MudButton>
+    @*<MudButton Variant="Variant.Text" Size=Size.Large Class="heroshima text-large text-white" Href="/">Insta Shifu</MudButton>*@
     <MudSpacer />
     <AuthorizeView>
         @if(context.User.IsInRole("Admin"))
@@ -14,7 +17,7 @@
         {
             <MudButton Class="shifu-button" Href="/Account">Мой кабинет</MudButton>
         }
-        <MudButton Variant="Variant.Text" Class="text-white" Href="/Identity/Account/Logout">Выход</MudButton>
+        <MudButton Variant="Variant.Text" Class="text-white" Href="/">Выход</MudButton>
     </AuthorizeView>
     
 </MudAppBar>
@@ -22,8 +25,19 @@
 
 <MudMainContent Class="px-3">
     <div class="row justify-content-center h-100 p-3">
-        <div class="col-10 col-md-11 w-100 h-100 p-5 radius-30 shadow" style="background-color:#F5E7D4">
+        <div class="px-5">
+            <MudButton Variant="Variant.Text" FullWidth=false Class="avante text-white" OnClick="(_) => GoBack()">назад</MudButton>
+        </div>
+        
+        <div class="col-10 col-md-11 h-100 p-3 p-sm-5 radius-30 shadow row justify-content-center" style="background-color:#F5E7D4">
             @Body
         </div>
     </div>
 </MudMainContent>
+
+@code {
+    private async Task GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+}

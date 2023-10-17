@@ -19,6 +19,7 @@ using MudBlazor.Services;
 using JusiLms.Services.Api;
 using Refit;
 using JusiLms;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,9 @@ builder.Services.AddControllers().AddOData(o =>
     usersType.AddProperty(typeof(User).GetProperty(nameof(User.ConfirmPassword)));
     oDataBuilder.EntitySet<Role>("Roles");
     o.AddRouteComponents("odata/Identity", oDataBuilder.GetEdmModel()).Count().Filter().OrderBy().Expand().Select().SetMaxTop(null).TimeZone = TimeZoneInfo.Utc;
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddTransient<IInitializeService, InitializeService>();
@@ -133,6 +137,12 @@ if(builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddSingleton<IYoutubeEmbedUrlCreator, YoutubeEmbedUrlCreator>();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+
 
 var app = builder.Build();
 

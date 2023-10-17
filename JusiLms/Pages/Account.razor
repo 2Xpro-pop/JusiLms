@@ -1,5 +1,6 @@
-﻿@page "/user/{Id:guid}"
+﻿@page "/Account"
 @using Microsoft.AspNetCore.Identity;
+@using System.Security.Claims;
 
 @inject IUsersApi UserService
 @inject ICategoryApi CategoryService
@@ -8,12 +9,13 @@
 @inject ISnackbar Snackbar
 @inject IHomeWorksApi HomeWorksService
 @inject NavigationManager NavigationManager
+@inject IHttpContextAccessor ContextAccessor
 
 @if (_user == null) return;
 
-<div class="row">
+<div class="row w-100 p-0 justify-content-center justify-content-sm-between">
 
-    <div class="col-12 col-lg-4 px-4 my-5 border-end-2">
+    <div class="col-12 col-lg-3 border-end-2 row d-lg-block p-0">
 
         @if (_loading)
         {
@@ -21,29 +23,43 @@
         }
         else
         {
-            <MudImage Height="182" Width="182" Src=@_user.Avatar ObjectFit="ObjectFit.Cover" Class="mb-3 radius-10 " />
-            <MudText Typo="Typo.h4" Class="avante dark-text">@_user.FullName</MudText>
-            <MudText Typo="Typo.h5" Class="avante dark-text large-bottom">@_user.Insta</MudText>
+            <div class="col-5 col-lg-12 justify-content-center justify-content-lg-start d-flex p-0 avatar-container">
+                <img src=@_user.Avatar class="mb-3 avatar radius-10 " />
+            </div>
 
-            <MudText Typo="Typo.h6" Class="avante grey-text">Почта:</MudText>
-            <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-5">@_user.Email</MudText>
+            <div class="col-7 col-lg-12 pr-2 row small-text justify-content-center align-items-stretch">
+                <MudText Typo="Typo.h4" Class="avante dark-text p-0">@_user.FullName</MudText>
+                <MudText Typo="Typo.h5" Class="avante dark-text large-bottom p-0">@_user.Insta</MudText>
 
-            <MudText Typo="Typo.h6" Class="avante grey-text">Ник в тг:</MudText>
-            <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-5">@_user.Tg</MudText>
+                <div class="col-12 row w-100 p-0">
+                    <div class="col-6 col-lg-12 p-0">
+                        <MudText Typo="Typo.h6" Class="avante grey-text">Почта:</MudText>
+                        <MudText Typo="Typo.h6" Class="avante grey-text mb-md-3 mb-lg-5">@_user.Email</MudText>
 
-            <MudText Typo="Typo.h6" Class="avante grey-text">Номер телефона:</MudText>
-            <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-5">@_user.PhoneNumber</MudText>
+                        <MudText Typo="Typo.h6" Class="avante grey-text">Ник в тг:</MudText>
+                        <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-3 mb-lg-5">@_user.Tg</MudText>
+                    </div>
 
-            <MudText Typo="Typo.h6" Class="avante grey-text">номер W/A::</MudText>
-            <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-5">@_user.Wa</MudText>
+                    <div class="col-6 col-lg-12 p-0">
+                        <MudText Typo="Typo.h6" Class="avante grey-text">Номер телефона:</MudText>
+                        <MudText Typo="Typo.h6" Class="avante grey-text mb-md-3 mb-lg-5">@_user.PhoneNumber</MudText>
+
+                        <MudText Typo="Typo.h6" Class="avante grey-text">номер W/A::</MudText>
+                        <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-3 mb-lg-5">@_user.Wa</MudText>
+                    </div>
+                </div>
+            </div>
+
+
+
         }
 
 
     </div>
 
-    <div class="col-12 col-lg-7 px-4 my-5">
+    <div class="col-7 col-lg-6 my-3 pr-2 p-0 border-end-1">
 
-        <div class="header-container avante dark-card px-5 py-1 mb-4 text-white">Выполнение дзшки</div>
+        <div class="header-container avante dark-card px-2 px-md-5 py-1 mb-2 mb-sm-4 text-white">Выполнение дзшки</div>
 
         @if (_loading)
         {
@@ -52,37 +68,92 @@
         else
         {
             var iter = 0;
-            foreach (var hw in _homeWorks)
+            var grouped = _allHomeworks.GroupBy(x => x.CategoryId);
+
+            foreach (var homeWorksModule in grouped)
             {
-                <div class="row w-100 justify-content-center align-items-stretch py-4">
-                    <div class="col-2 h-100 d-flex align-items-stretch justify-content-center p-1">
-                        <div class="bg-white p-1 py-3 avante radius h-100 w-100">
-                            <div class="text-center h4 m-0">
-                                @(++iter)
+                iter++;
+                @foreach (var hw in homeWorksModule)
+                {
+                    <div class="row col-12 justify-content-center align-items-center py-2 py-sm-4 hw">
+                        <div class="col-2 h-100 d-flex align-items-center justify-content-center p-1">
+                            <div class="bg-white pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
+                                <h5 class="text-center m-0">
+                                    @(iter)
+                                </h5>
                             </div>
                         </div>
-                    </div>
 
-                    <div Class="col-10 d-flex" >
-                        <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer">
-                            <MudText Typo="Typo.h6" Class="avante">@hw.Details</MudText>
+                        <div class="col-10 p-0 h-100">
+                            <div class=" w-100 h-100 pa-1 px-sm-2 h-100 w-100 py-sm-1 avante dark-card grey-card small-text cursor-pointer">
+                                <h5 class="avante small-text" style="overflow: hidden">@hw.Details</h5>
+                            </div>
                         </div>
+
                     </div>
-                </div>
+                }
             }
         }
 
     </div>
 
+    <div class="col-3 col-sm-5 col-lg-2 my-3">
+        <div class="header-container avante dark-card px-2 px-md-5 py-1 mb-2 mb-sm-4 text-white" style="width:auto">Статус</div>
+
+        @if (_loading)
+        {
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+        }
+        else
+        {
+            var iter = 0;
+            var grouped = _allHomeworks.GroupBy(x => x.CategoryId);
+
+            foreach (var homeWorksModule in grouped)
+            {
+                iter++;
+                @foreach (var hw in homeWorksModule)
+                {
+                    <div class="row col-12 justify-content-center align-items-center py-2 py-sm-4 hw">
+                        <div class="col-12 h-100 d-flex align-items-center justify-content-center p-1">
+                            <div class="pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
+                                <h5 class="text-center m-0 over-text">
+                                    @{
+                                        var s = "";
+                                    }
+                                    @for (var i = 0; i < hw.Difficulty; i++)
+                                    {
+                                        s += "*";
+                                    }
+                                    @if (_homeWorks.Any(x => x.Id == hw.Id))
+                                    {
+                                        <span class="access">выполнено @s</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="dont-start">не начато @s</span>
+                                    }
+
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </div>
+
+
 </div>
 
 @code {
-
     [Parameter]
     public Guid Id { get; set; }
 
     private User? _user;
     private List<HomeWork> _homeWorks = new();
+    private List<HomeWork> _addableHomeWorks = new();
+    private IEnumerable<HomeWork> _allHomeworks = Array.Empty<HomeWork>();
 
     private MudSelect<HomeWork> _select;
 
@@ -90,16 +161,26 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var id = ContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        Id = Guid.Parse(id);
         _loading = true;
         _user = await UserService.GetUserById(Id);
 
         if (_user == null) return;
 
+        _addableHomeWorks = new(await HomeWorksService.GetAllHomeWorks());
+        _allHomeworks = _addableHomeWorks.ToList();
 
         IEnumerable<HomeWork> exist = await HomeWorksService.GetUserHomeworks(Guid.Parse(_user.Id)) ?? Array.Empty<HomeWork>();
 
         _homeWorks = new(exist);
 
+        foreach (var hw in _homeWorks)
+        {
+            _addableHomeWorks.Remove(hw);
+        }
+
+        this.StateHasChanged();
 
         _loading = false;
     }
