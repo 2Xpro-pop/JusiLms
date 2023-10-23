@@ -228,6 +228,12 @@
         var dialog = await DialogService.ShowAsync<AddLessonDialog>("Обновить",parameters);
         var dialogResult = await dialog.Result;
 
+        if(dialogResult.Data is bool remove)
+        {
+            await RemoveLesson(lesson2);
+            return;
+        }
+
         if (dialogResult.Data is not Lesson lesson)
         {
             return;
@@ -268,6 +274,7 @@
             _lessons = await LessonsService.GetLessonsByCategory(Id);
             _lessonsLoading = false;
             this.StateHasChanged();
+            Snackbar.Add("Урок удален", Severity.Info);
         }
         catch (Refit.ValidationApiException apiExc)
         {

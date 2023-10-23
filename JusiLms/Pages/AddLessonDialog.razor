@@ -8,6 +8,11 @@
         
     </DialogContent>
     <DialogActions>
+        @if(Lesson.CategoryId != Guid.Empty)
+        {
+            <MudButton OnClick="Remove" Color="Color.Error">Удалить</MudButton>
+        }
+        <MudSpacer/>
         <MudButton OnClick="Cancel">Отмена</MudButton>
         @if(Lesson.CategoryId != Guid.Empty)
         {
@@ -41,4 +46,8 @@
         MudDialog.Close(DialogResult.Ok(Lesson));
     }
     void Cancel() => MudDialog.Cancel();
+    private async Task Remove()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
 }
