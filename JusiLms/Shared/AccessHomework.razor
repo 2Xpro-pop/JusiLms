@@ -1,0 +1,61 @@
+﻿@inject ICategoryApi CategoriesApi
+
+<EditForm @ref=_form Model=HomeWork>
+    <DataAnnotationsValidator />
+    <MudDialog Class="bg-white" Options=@_optiosn>
+        <DialogContent>
+            <h5>Описание: @HomeWork.Details</h5>
+            <h6>Сложность: <MudRating SelectedValue=HomeWork.Difficulty MaxValue="3" ReadOnly /></h6>
+            <MudCheckBox @bind-Checked=@Checked Label="Выполнено" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Отмена</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+</EditForm>
+@code {
+    private EditForm _form;
+
+    private string? _text;
+    private IEnumerable<Category> _categories = Array.Empty<Category>();
+
+    private readonly DialogOptions _optiosn = new()
+        {
+            MaxWidth = MaxWidth.Small,
+            FullWidth = false,
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CategoriesApi.GetCategories();
+
+        if (HomeWork.Id != Guid.Empty)
+        {
+            _text = _categories.Where(x => x.Id == HomeWork.CategoryId).FirstOrDefault()?.Name;
+            return;
+        }
+
+        var first = _categories.FirstOrDefault();
+
+        if (first == null) return;
+
+        _text = first.Name;
+        HomeWork.CategoryId = first.Id;
+        HomeWork.Difficulty = 1;
+    }
+
+    [Parameter]
+    public HomeWork HomeWork { get; set; } = new();
+    [Parameter]
+    public bool Checked { get; set; }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    private async Task Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(Checked));
+    }
+    void Cancel() => MudDialog.Cancel();
+}

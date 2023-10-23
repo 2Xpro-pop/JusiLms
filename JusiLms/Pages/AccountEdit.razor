@@ -101,29 +101,14 @@
                         }
 
                         <div class="col-10 p-0 h-100">
-                            <MudBadge Class="w-100 h-100" BadgeClass="norm-x" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
-                                <div class="pa-1 px-sm-2 h-100 w-100 py-sm-1 avante dark-card grey-card small-text cursor-pointer">
-                                    <h5 class="avante small-text" style="overflow: hidden">@hw.Details</h5>
-                                </div>
-                            </MudBadge>
+                            <div class=" w-100 h-100 pa-1 px-sm-2 h-100 w-100 py-sm-1 avante dark-card grey-card small-text cursor-pointer" @onclick="(_ => UpdateHomework(hw))">
+                                <h5 class="avante small-text" style="overflow: hidden">@hw.Details</h5>
+                            </div>
                         </div>
 
                     </div>
                 }
             }
-
-            <MudSelect T="HomeWork" Label="Добавить выполненую дзшку"
-                       Class="shifu-button col-11 avante mt-2 d-none d-sm-block"
-                       Dense=true
-                       ListClass="bg-white h6"
-                       PopoverClass="avante"
-            @ref=_select
-                       ValueChanged=AddHomework>
-                @foreach (var hw in _addableHomeWorks)
-                {
-                    <MudSelectItem Value=hw Class="avante">@hw.Details</MudSelectItem>
-                }
-            </MudSelect>
         }
 
     </div>
@@ -270,5 +255,29 @@
         this.StateHasChanged();
         await Update();
         this.StateHasChanged();
+    }
+
+    private async Task UpdateHomework(HomeWork homeWork)
+    {
+        var options = new DialogParameters<AccessHomework>();
+        options.Add(x => x.HomeWork, homeWork);
+        options.Add(x => x.Checked, _homeWorks.Any(x => x.Id == homeWork.Id));
+
+        var dialog = await DialogService.ShowAsync<AccessHomework>("Потвердить задание",options);
+        var dialogResult = await dialog.Result;
+
+        if(dialogResult.Data is not bool homeworkAccess)
+        {
+            return;
+        }
+
+        if(homeworkAccess)
+        {
+            await AddHomework(homeWork);
+        }
+        else
+        {
+            await RemoveHomework(homeWork);
+        }
     }
 }
