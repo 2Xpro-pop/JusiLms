@@ -157,6 +157,11 @@
                 }
             }
         }
+
+        <div class="header-container avante dark-card px-2 px-md-5 py-1 mb-2 mb-sm-4 text-white shadow-card all-homeworks" style="width:auto">
+            всего: @_homeWorks.Select(x => x.Difficulty).Sum()  <MudIcon Icon="@Icons.Material.Filled.Star" Style="font-size: 0.72em" />
+        </div>
+
     </div>
 
 

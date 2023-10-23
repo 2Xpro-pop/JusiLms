@@ -1,4 +1,12 @@
-﻿.hw {
+﻿.shadow-card {
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.40) inset;
+}
+
+.all-homeworks {
+    background: #C2654F;
+}
+
+.hw {
     height: 100px;
 }
 
