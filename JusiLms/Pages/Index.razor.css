@@ -110,6 +110,10 @@ footer h3 {
         line-height: normal;
     }
 
+.module {
+    height: 132px;
+}
+
 @media (max-width: 960px ) {
     h1 {
         text-shadow: 4.456503322601318px 2.4731016120910645px 1.39305604696273804px rgba(70, 20, 20, 0.25);
@@ -134,7 +138,12 @@ footer h3 {
     footer h3 {
         font-size: 1.6em;
     }
+
+    .module {
+        height: 112px;
+    }
 }
+
 
 @media (max-width: 720px ) {
 
@@ -194,6 +203,3 @@ footer h3 {
         }
 }
 
-.module {
-    height: 180px;
-}
