@@ -73,16 +73,32 @@
             foreach (var homeWorksModule in grouped)
             {
                 iter++;
+                var was = false;
                 @foreach (var hw in homeWorksModule)
                 {
+
                     <div class="row col-12 justify-content-center align-items-center py-2 py-sm-4 hw" >
-                        <div class="col-2 h-100 d-flex align-items-center justify-content-center p-1">
-                            <div class="bg-white pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
-                                <h5 class="text-center m-0">
-                                    @(iter)
-                                </h5>
+                        @if (was)
+                        {
+                            <div class="col-2 h-100 d-flex align-items-center justify-content-center p-1">
+                                <div class="pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
+                                    <h5 class="text-center m-0 opacity-0">
+                                        @(iter)
+                                    </h5>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            was = true;
+                            <div class="col-2 h-100 d-flex align-items-center justify-content-center p-1 p-sm-2">
+                                <div class="bg-white p-md-3 pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
+                                    <h5 class="text-center m-0">
+                                        @(iter)
+                                    </h5>
+                                </div>
+                            </div>
+                        }
 
                         <div class="col-10 p-0 h-100">
                             <MudBadge Class="w-100 h-100" BadgeClass="norm-x" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
@@ -129,22 +145,23 @@
                 iter++;
                 @foreach (var hw in homeWorksModule)
                 {
-                    <div class="row col-12 justify-content-center align-items-center hw">
+                    <div class="row col-12 justify-content-center align-items-center py-2 py-sm-4 hw">
                         <div class="col-12 h-100 d-flex align-items-center justify-content-center">
                             <div class="avante radius h-100 w-100 small-text">
-                                <h5 class="text-center m-0 over-text" style="text-wrap: unset;">
-                                    @{ var s = "";}
-                                    @for(var i = 0; i < hw.Difficulty; i++)
-                                    {
-                                        s += "*";
-                                    }
+                                <h5 class="m-0 over-text" style="text-wrap: unset;">
                                     @if(_homeWorks.Any(x => x.Id == hw.Id))
                                     {
-                                        <span class="access">выполнено @s</span>
+                                        <span class="access">
+                                            выполнено <br />
+                                            @for (var i = 0; i < hw.Difficulty; i++)
+                                            {
+                                                <MudIcon Icon="@Icons.Material.Filled.Star" Style="font-size: 0.72em" />
+                                            }
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="dont-start">не начато @s</span>
+                                        <span class="dont-start">не начато </span>
                                     }
 
                                 </h5>
