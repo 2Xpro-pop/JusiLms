@@ -158,21 +158,6 @@
         }
     </div>
 
-    <div class="col-12 d-block d-sm-none">
-        <MudSelect T="HomeWork" Label="Добавить выполненую дзшку"
-                   Class="shifu-button col-11 avante mt-2"
-                   ListClass="bg-white h6"
-                   Dense=true
-                   PopoverClass="avante"
-        @ref=_select
-                   ValueChanged=AddHomework>
-            @foreach (var hw in _addableHomeWorks)
-            {
-                <MudSelectItem Value=hw Class="avante">@hw.Details</MudSelectItem>
-            }
-        </MudSelect>
-    </div>
-
 </div>
 
 @code {
@@ -184,8 +169,6 @@
     private List<HomeWork> _homeWorks = new();
     private List<HomeWork> _addableHomeWorks = new();
     private IEnumerable<HomeWork> _allHomeworks = Array.Empty<HomeWork>();
-
-    private MudSelect<HomeWork> _select;
 
     private bool _loading;
 
@@ -250,7 +233,6 @@
         {
             return;
         }
-        _select.Value = null;
         await HomeWorksService.AddHomeworkToUser(Id, hw.Id);
         this.StateHasChanged();
         await Update();
