@@ -15,7 +15,7 @@ public class UserDto
         get; set;
     }
 
-    [Required, MinLength(5, ErrorMessage = "Минимальная длинная логина 5")]
+    [Required, MinLength(4, ErrorMessage = "Минимальная длинная логина 5")]
     [RegularExpression("^[a-zA-Z]+$", ErrorMessage = "Логин должен содержать только буквы")]
     public string Login
     {
