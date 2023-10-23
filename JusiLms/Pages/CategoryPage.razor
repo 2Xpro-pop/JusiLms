@@ -3,6 +3,8 @@
 @inject ICategoryService CategoryService
 @inject ILessonsApi LessonsService
 @inject NavigationManager NavigationManager
+@inject ILogger<CategoryPage> Logger
+@inject ISnackbar Snackbar
 
 @if (_category == null && !_notFound)
 {
@@ -12,7 +14,7 @@
 
 @if (_notFound)
 {
-    <MudText Typo="Typo.h2">Not found :^(</MudText>
+    <MudText Typo="Typo.h2">Категория не найдена :^(</MudText>
     return;
 }
 
@@ -44,8 +46,29 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _category = await CategoryService.GetCategory(Id);
-        _notFound = _category == null;
+        try
+        {
+            _category = await CategoryService.GetCategory(Id);
+        }
+        catch (Refit.ValidationApiException exc)
+        {
+            if(exc.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _notFound = true;
+                _category = null;
+            }
+
+            await Logger.LogException(exc, "Categories cannot get");
+            Snackbar.Add("");
+        }
+        catch
+        {
+
+        }
+        finally
+        {
+            _notFound = _category == null;
+        }
 
         if (_category == null)
         {

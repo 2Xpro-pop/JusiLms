@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using JusiLms.Models;
+using JusiLms.Dto;
 
 namespace JusiLms.Controllers;
 
@@ -18,9 +19,17 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddUser(User user)
+    public async Task<IActionResult> AddUser(UserDto user)
     {
-        await _userService.AddUser(user);
+        try
+        {
+            await _userService.AddUser(user);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
         return Ok();
     }
 
@@ -76,7 +85,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("add-multiple")]
-    public async Task<IActionResult> AddUsers(IEnumerable<User> users)
+    public async Task<IActionResult> AddUsers(IEnumerable<UserDto> users)
     {
         await _userService.AddUsers(users);
         return Ok();

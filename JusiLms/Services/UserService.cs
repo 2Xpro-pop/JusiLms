@@ -1,4 +1,5 @@
-﻿using JusiLms.Models;
+﻿using JusiLms.Dto;
+using JusiLms.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,12 +14,23 @@ public class UserService : IUserService
         _userManager = userManager;
     }
 
-    public async Task AddUser(User user)
+    public async Task AddUser(UserDto userDto)
     {
-        await _userManager.CreateAsync(user, user.Password!);
+        var result = await _userManager.CreateAsync(userDto, userDto.Password);
+
+        if (!result.Succeeded)
+        {
+            var errorMessage = "Failed to create user: ";
+            foreach (var error in result.Errors)
+            {
+                errorMessage += $"{error.Description}. ";
+            }
+
+            throw new ApplicationException(errorMessage);
+        }
     }
 
-    public async Task AddUsers(IEnumerable<User> users)
+    public async Task AddUsers(IEnumerable<UserDto> users)
     {
         foreach (var user in users)
         {

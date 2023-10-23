@@ -1,15 +1,16 @@
-﻿using JusiLms.Models;
+﻿using JusiLms.Dto;
+using JusiLms.Models;
 
 namespace JusiLms.Services;
 
 public interface IUserService
 {
-    public Task AddUser(User user);
+    public Task AddUser(UserDto userDto);
     public Task UpdateUser(User user);
     public Task DeleteUser(User user);
     public Task<User?> GetUserById(Guid id);
     public Task<User?> GetUserByEmail(string email);
     public Task<User?> GetUserByUsername(string username);
     public Task<IEnumerable<User>> GetAllUsers();
-    public Task AddUsers(IEnumerable<User> users);
+    public Task AddUsers(IEnumerable<UserDto> users);
 }

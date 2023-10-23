@@ -1,4 +1,5 @@
 ﻿@page "/admin"
+@using JusiLms.Dto;
 @using Microsoft.AspNetCore.Identity;
 
 @attribute [Authorize(Roles = "Admin")]
@@ -167,7 +168,7 @@
         var reference = await DialogService.ShowAsync<AddUserDialog>();
         var result = await reference.Result;
 
-        if (result.Data is IEnumerable<User> usersForAdd)
+        if (result.Data is IEnumerable<UserDto> usersForAdd)
         {
             try
             {
