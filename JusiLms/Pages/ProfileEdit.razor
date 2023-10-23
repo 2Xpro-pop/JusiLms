@@ -1,0 +1,178 @@
+﻿@page "/user-detail/{Id:guid}"
+
+@attribute [Authorize(Roles = "Admin")]
+
+@inject IUsersApi UserService
+@inject IFileService FileService
+@inject ISnackbar Snackbar
+@inject ILogger<ProfileEdit> Logger
+@inject IDialogService DialogService
+
+@if (_loading)
+{
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+    return;
+}
+
+@if (_user == null)
+{
+    <h2 class="avante">Пользователь Не Найден :-( </h2>
+    return;
+}
+
+<EditForm Model=@_user Context="model">
+    <DataAnnotationsValidator />
+    @if (!string.IsNullOrWhiteSpace(_user.Avatar))
+    {
+        <MudBadge BadgeClass="cursor-pointer" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveAvatar(_user))">
+            <MudImage ObjectFit="ObjectFit.Cover"
+                      ObjectPosition="ObjectPosition.Center"
+                      Src="@_user.Avatar"
+                      Width="148"
+                      Height="200" />
+        </MudBadge>
+    }
+    else
+    {
+        <MudFileUpload T="IBrowserFile" OnFilesChanged="@(args => UploadFile(_user, args))">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           for="@context">
+                    Загрузить Аватарку
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+    }
+
+    <MudTextField Value=@_user.UserName Label="Логин"
+                  ReadOnly=true Class="mt-0" />
+    <MudTextField @bind-Value=@_user.FullName Label="ФИО"
+                  Required=true
+                  RequiredError="ФИО необходимо" Class="mt-0" />
+    <MudTextField @bind-Value=@_user.Email Label="Email"
+                  Required=true
+                  RequiredError="Email необходим" />
+    <MudTextField @bind-Value=@_user.Insta Label="Инста" />
+    <MudTextField @bind-Value=@_user.Tg Label="Телега" />
+    <MudTextField @bind-Value=@_user.PhoneNumber Label="Телефон" />
+    <MudTextField @bind-Value=@_user.Wa Label="номер W/A:" />
+
+</EditForm>
+<div class="row">
+    <MudButton Class="shifu-button avante mt-2 col-md-auto" OnClick="UpdateUser">Сохранить</MudButton>
+    <MudButton Color="Color.Error" Class="col-md-auto avante mt-2" OnClick="ChangePassword">Изменить пароль</MudButton>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private User? _user;
+
+    private bool _loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadingHelper.Load(v => _loading = v,
+                async () => _user = await UserService.GetUserById(Id),
+                this.StateHasChanged);
+        }
+        catch (Refit.ValidationApiException exc)
+        {
+            await Logger.LogException(exc, "Category cannot get");
+
+            if (exc.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _user = null;
+                _loading = false;
+            }
+            else
+            {
+                Snackbar.Add("Что-то пошло не так", Severity.Error);
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+
+    }
+
+    private async Task UploadFile(User user, InputFileChangeEventArgs args)
+    {
+        user.Avatar = await FileService.UploadFile(args.File);
+    }
+
+    private async Task RemoveAvatar(User user)
+    {
+        await FileService.RemoveFile(user.Avatar);
+    }
+
+    private async Task UpdateUser()
+    {
+        _loading = true;
+        try
+        {
+            await UserService.UpdateUser(_user);
+            _user = await UserService.GetUserById(Id);
+            _loading = false;
+
+            this.StateHasChanged();
+        }
+        catch (Refit.ValidationApiException apiExc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            await Logger.LogException(apiExc, "Profile cannot update");
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            Logger.LogError(exc, "Something went wrong");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task ChangePassword()
+    {
+        var dialog = await DialogService.ShowAsync<ChangePassword>("Смена пароля");
+        var dialogResult = await dialog.Result;
+
+        if(dialogResult.Data is not string password)
+        {
+            return;
+        }
+
+        try
+        {
+            await UserService.ChangePassword(Id, password);
+            this.StateHasChanged();
+            Snackbar.Add("Пароль обновлен", Severity.Success);
+        }
+        catch (Refit.ValidationApiException apiExc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            await Logger.LogException(apiExc, "Cannot update password");
+        }
+        catch (Refit.ApiException apiExc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            await Logger.LogException(apiExc, "Cannot update password");
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Что-то пошло не так", Severity.Error);
+            Logger.LogError(exc, "Something went wrong");
+        }
+        finally
+        {
+        }
+    }
+}

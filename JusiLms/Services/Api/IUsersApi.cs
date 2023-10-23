@@ -10,7 +10,7 @@ public interface IUsersApi
     Task AddUser([Body] UserDto user);
 
     [Put("/api/Users")]
-    Task UpdateUser([Body] User user);
+    Task UpdateUser([Body] UpdateUserDto user);
 
     [Delete("/api/Users")]
     Task DeleteUser([Body] User user);
@@ -29,4 +29,7 @@ public interface IUsersApi
 
     [Post("/api/Users/add-multiple")]
     Task AddUsers([Body] IEnumerable<UserDto> users);
+
+    [Put("/api/Users/change-password/{id}/{password}")]
+    Task ChangePassword([AliasAs("id")] Guid userId, [AliasAs("password")] string newPassword);
 }

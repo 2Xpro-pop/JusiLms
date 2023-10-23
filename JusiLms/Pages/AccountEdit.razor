@@ -50,8 +50,6 @@
                 </div>
             </div>
 
-
-
         }
 
 
@@ -158,6 +156,9 @@
         }
     </div>
 
+    <div class="col-12 row justify-content-end">
+        <MudButton Class="shifu-button avante mt-2 col-md-auto" OnClick=@(() => NavigationManager.NavigateTo($"/user-detail/{Id}"))>Редактировать аккаунт</MudButton>
+    </div>
 </div>
 
 @code {

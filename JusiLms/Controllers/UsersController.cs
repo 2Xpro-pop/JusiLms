@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using JusiLms.Models;
 using JusiLms.Dto;
+using JusiLms.Exceptions;
 
 namespace JusiLms.Controllers;
 
@@ -34,9 +35,21 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateUser(User user)
+    public async Task<IActionResult> UpdateUser(UpdateUserDto user)
     {
-        await _userService.UpdateUser(user);
+        try
+        {
+            await _userService.UpdateUser(user);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        
         return Ok();
     }
 
@@ -88,6 +101,20 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> AddUsers(IEnumerable<UserDto> users)
     {
         await _userService.AddUsers(users);
+        return Ok();
+    }
+    [HttpPut("change-password/{id}/{password}")]
+    public async Task<IActionResult> ChangePassword(Guid id, string password)
+    {
+        var user = await _userService.GetUserById(id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        await _userService.ChangePassword(user, password);
+
         return Ok();
     }
 }
