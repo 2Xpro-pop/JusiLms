@@ -1,4 +1,5 @@
 ﻿@using System.Text.RegularExpressions;
+
 @inject IFileService FileService
 <MudDialog Class="bg-white" Options="_options">
     <DialogContent>
@@ -40,7 +41,7 @@
                             </MudFileUpload>
                         }
 
-                        <MudTextField @bind-Value=@user.Name Label="Логин"
+                        <MudTextField @bind-Value=@user.Login Label="Логин"
                                       Required=true
                                       RequiredError="Логин необходим" Class="mt-0" />
                         <MudTextField @bind-Value=@user.FullName Label="ФИО"
@@ -70,7 +71,7 @@
 
 
 @code {
-    private readonly Dictionary<User, MudForm> forms = new();
+    private readonly Dictionary<UserDto, MudForm> forms = new();
 
     private readonly string _specials = "#$@!%^&*()";
 
@@ -79,7 +80,7 @@
             MaxWidth = MaxWidth.Large
         };
 
-    private List<User> _usersForAdd = new()
+    private List<UserDto> _usersForAdd = new()
     {
         new(),
     };
@@ -107,7 +108,7 @@
             foreach (var task in forms.Values.Select(x => x.Validate())) await task;
             return;
         }
-        MudDialog.Close(_usersForAdd.Where(x => !string.IsNullOrWhiteSpace(x.Name) && !string.IsNullOrWhiteSpace(x.Email)).Take(_countForAdd));
+        MudDialog.Close(_usersForAdd.Where(x => !string.IsNullOrWhiteSpace(x.Login) && !string.IsNullOrWhiteSpace(x.Email)).Take(_countForAdd));
     }
     void Cancel() => MudDialog.Cancel();
 

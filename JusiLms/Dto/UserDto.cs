@@ -10,6 +10,11 @@ public class UserDto
         get; set;
     } = null!;
 
+    public string? Avatar
+    {
+        get; set;
+    }
+
     [Required, MinLength(5, ErrorMessage = "Минимальная длинная логина 5")]
     [RegularExpression("^[a-zA-Z]+$", ErrorMessage = "Логин должен содержать только буквы")]
     public string Login
@@ -22,6 +27,11 @@ public class UserDto
     {
         get; set;
     } = null!;
+
+    public string? PhoneNumber
+    {
+        get; set;
+    }
 
     public string? Email
     {
@@ -52,8 +62,10 @@ public class UserDto
         var user = new User
         {
             UserName = userDto.Login,
+            Avatar = userDto.Avatar,
             Email = userDto.Email,
             FullName = userDto.FullName,
+            PhoneNumber = userDto.PhoneNumber,
             Insta = userDto.Insta,
             Tg = userDto.Tg,
             Wa = userDto.Wa,
@@ -70,7 +82,9 @@ public class UserDto
         return new UserDto
         {
             Id = user.Id,
+            Avatar = user.Avatar,
             Login = user.UserName,
+            PhoneNumber = user.PhoneNumber,
             Email = user.Email,
             FullName = user.FullName,
             Insta = user.Insta,
