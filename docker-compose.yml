@@ -29,5 +29,7 @@ services:
         DOCKER_POSTGRESS_CONNECTION_STRING: User ID=postgres;Password=example;Host=postgres;Port=5432;Database=jusi;
         JUSI_API_HOST: jusilms:80
         RUNNING_IN_DOCKER: true
+    volumes:
+      - ./wwwroot/avatars:/app/wwwroot/avatars
     depends_on: 
       - postgres
