@@ -14,8 +14,8 @@ public interface IHomeWorksApi
     [Put("/api/HomeWorks")]
     Task Update([Body] HomeWork work);
 
-    [Delete("/api/HomeWorks")]
-    Task Delete([Body] HomeWork work);
+    [Delete("/api/HomeWorks/{id}")]
+    Task Delete(Guid id);
 
     [Get("/api/HomeWorks/{id}")]
     Task<HomeWork> Get(Guid id);

@@ -11,7 +11,8 @@ public class HomeWork : TimeStampedModel
     {
         get; set;
     }
-    public string Header
+    [Required(ErrorMessage = "Необходимо названиe задание")]
+    public string? Header
     {
         get; set;
     }

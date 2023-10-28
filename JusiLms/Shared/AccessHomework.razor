@@ -4,6 +4,7 @@
     <DataAnnotationsValidator />
     <MudDialog Class="bg-white" Options=@_optiosn>
         <DialogContent>
+            <h4>Задание: @HomeWork.Header</h4>
             <h5>Описание: @HomeWork.Details</h5>
             <h6>Сложность: <MudRating SelectedValue=HomeWork.Difficulty MaxValue="3" ReadOnly /></h6>
             <MudCheckBox @bind-Checked=@Checked Color="Color.Primary" Label="Выполнено" />

@@ -4,7 +4,8 @@
     <DataAnnotationsValidator />
     <MudDialog Class="bg-white" Options=@_optiosn>
         <DialogContent>
-            <MudTextField Label="Задание" @bind-Value=HomeWork.Details For="(() => HomeWork.Details)" />
+            <MudTextField Label="Задание" @bind-Value=HomeWork.Header For="(() => HomeWork.Header)" />
+            <MudTextField Label="Описание" @bind-Value=HomeWork.Details For="(() => HomeWork.Details)" />
             <MudSelect Label="Выберите модуль"
                        Class="shifu-button col-11 avante mt-2"
                        ListClass="bg-white h6"

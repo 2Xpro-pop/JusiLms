@@ -38,10 +38,21 @@ public class HomeWorksController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(HomeWork work)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
-        await _homeWorksService.Delete(work);
+        var hw = await _homeWorksService.Get(id);
+
+        if (hw == null)
+        {
+            return NotFound();
+        }
+
+        if(hw != null)
+        {
+            await _homeWorksService.Delete(hw);
+        }
+        
         return Ok();
     }
 
@@ -49,10 +60,7 @@ public class HomeWorksController : ControllerBase
     public async Task<IActionResult> Get(Guid id)
     {
         var homeWork = await _homeWorksService.Get(id);
-        if (homeWork == null)
-            return NotFound();
-
-        return Ok(homeWork);
+        return homeWork == null ? NotFound() : Ok(homeWork);
     }
 
     [HttpGet("user/{userId}")]

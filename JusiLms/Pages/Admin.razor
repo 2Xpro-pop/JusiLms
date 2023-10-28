@@ -107,7 +107,7 @@
                         <div class="col-2 h-100 d-flex align-items-stretch justify-content-center p-1">
                             <div class="bg-white p-1 py-3 avante radius h-100 w-100">
                                 <div class="text-center h4 m-0">
-                                    @(iter)
+                                    @(_categories.Select((v, i) => new { category = v, index = i }).First(x => x.category.Id == homeWorksModule.Key).index+1)
                                 </div>
                             </div>
                         </div>
@@ -219,9 +219,20 @@
             this.StateHasChanged();
             Snackbar.Add("Пользователь удален!", Severity.Success);
         }
-        catch
+        catch (Refit.ValidationApiException apiExc)
         {
             Snackbar.Add("Произошла ошибка!", Severity.Error);
+            await Logger.LogException(apiExc, "Cannot remove user");
+        }
+        catch (Refit.ApiException apiExc)
+        {
+            Snackbar.Add("Произошла ошибка!", Severity.Error);
+            await Logger.LogException(apiExc, "Cannot remove user");
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Произошла ошибка!", Severity.Error);
+            Logger.LogError(exc, "Cannot remove user");
         }
         finally
         {
@@ -335,16 +346,27 @@
         this.StateHasChanged();
         try
         {
-            await HomeWorksService.Delete(homeWork);
+            await HomeWorksService.Delete(homeWork.Id);
             await Task.Delay(2000);
             _homeworks = await HomeWorksService.GetAllHomeWorks();
             _homeworksLoading = false;
             this.StateHasChanged();
             Snackbar.Add("Дзшка удалена!", Severity.Success);
         }
-        catch
+        catch (Refit.ValidationApiException apiExc)
         {
             Snackbar.Add("Произошла ошибка!", Severity.Error);
+            await Logger.LogException(apiExc, "Cannot remove homework");
+        }
+        catch (Refit.ApiException apiExc)
+        {
+            Snackbar.Add("Произошла ошибка!", Severity.Error);
+            await Logger.LogException(apiExc, "Cannot remove homework");
+        }
+        catch (Exception exc)
+        {
+            Snackbar.Add("Произошла ошибка!", Severity.Error);
+            Logger.LogError(exc, "Cannot remove homework");
         }
         finally
         {
