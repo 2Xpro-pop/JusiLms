@@ -84,7 +84,7 @@
                             <div class="col-2 h-100 d-flex align-items-center justify-content-center p-1">
                                 <div class=" pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
                                     <h5 class="text-center m-0 opacity-0">
-                                        @(iter)
+                                        @iter
                                     </h5>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
                             <div class="col-2 h-100 d-flex align-items-center justify-content-center p-1 p-sm-2">
                                 <div class="bg-white pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
                                     <h5 class="text-center m-0">
-                                        @(iter)
+                                        @(_categories.Select((v, i) => new { category = v, index = i }).First(x => x.category.Id == homeWorksModule.Key).index + 1)
                                     </h5>
                                 </div>
                             </div>
@@ -175,6 +175,7 @@
     private List<HomeWork> _homeWorks = new();
     private List<HomeWork> _addableHomeWorks = new();
     private IEnumerable<HomeWork> _allHomeworks = Array.Empty<HomeWork>();
+    private IEnumerable<Category> _categories = Array.Empty<Category>();
 
     private MudSelect<HomeWork> _select;
 
@@ -199,6 +200,15 @@
         foreach (var hw in _homeWorks)
         {
             _addableHomeWorks.Remove(hw);
+        }
+
+        try
+        {
+            _categories = await CategoryService.GetCategories();
+        }
+        catch
+        {
+            _categories = Array.Empty<Category>();
         }
 
         this.StateHasChanged();
