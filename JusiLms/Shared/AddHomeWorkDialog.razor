@@ -31,7 +31,10 @@
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Отмена</MudButton>
-            <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">
+                @(HomeWork.Id == Guid.Empty ? "Добавить" : "Обновить")
+                
+            </MudButton>
         </DialogActions>
     </MudDialog>
 

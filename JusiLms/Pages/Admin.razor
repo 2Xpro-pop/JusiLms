@@ -113,7 +113,7 @@
                         </div>
 
                         <MudBadge Class="col-10 d-flex" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
-                            <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer">
+                            <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer" @onclick="(_ => UpdateHomework(hw))">
                                 <MudText Typo="Typo.h6" Class="avante">@hw.Header</MudText>
                             </div>
                         </MudBadge>
@@ -160,7 +160,7 @@
                 async () => _homeworks = await HomeWorksService.GetAllHomeWorks(),
                 StateHasChanged);
         }
-        
+
     }
 
     public async Task OpenUserAddDialog()
@@ -400,4 +400,44 @@
 
         return $"Был(а) в сети {(int)delta.TotalDays} дней назад";
     }
+
+    private async Task UpdateHomework(HomeWork hw)
+    {
+        var parameters = new DialogParameters<AddHomeWorkDialog>();
+        parameters.Add(x => x.HomeWork, hw);
+
+        var reference = await DialogService.ShowAsync<AddHomeWorkDialog>("Обновить задание", parameters);
+        var result = await reference.Result;
+
+        if (result.Data is HomeWork homeWork)
+        {
+            try
+            {
+                _homeworksLoading = true;
+                this.StateHasChanged();
+                await HomeWorksService.Update(homeWork);
+                _homeworks = await HomeWorksService.GetAllHomeWorks();
+                _homeworksLoading = false;
+                this.StateHasChanged();
+                Snackbar.Add("Дзшка обновлено!", Severity.Success);
+            }
+            catch (Refit.ValidationApiException apiExc)
+            {
+                Snackbar.Add("Произошла ошибка!", Severity.Error);
+                await Logger.LogException(apiExc, "Cannot add Homework");
+
+            }
+            catch (Exception exc)
+            {
+                Snackbar.Add("Произошла ошибка!", Severity.Error);
+                Logger.LogError(exc, "Cannot add Homework");
+            }
+            finally
+            {
+                _homeworksLoading = false;
+            }
+        }
     }
+}
+
+
