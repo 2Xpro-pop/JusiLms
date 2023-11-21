@@ -32,11 +32,11 @@
                     <MudBadge Class="col-9" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveUser(user))">
                         <div class="px-2 py-1 avante dark-card cursor-pointer" @onclick=@( _ => NavigationManager.NavigateTo($"/user/{user.Id}/edit"))>
                             <MudText Typo="Typo.h5" Class="avante text-white">@user.FullName</MudText>
-                            <MudText Typo="Typo.h6" Class="avante text-white">@GetLastActivity(user)</MudText>
-                        </div>
-                    </MudBadge>
+                                <MudText Typo="Typo.h6" Class="avante text-white">@GetLastActivity(user)</MudText>
+                            </div>
+                        </MudBadge>
 
-                </div>
+                    </div>
 
 
             }
@@ -63,12 +63,9 @@
                 <div class="mb-2 w-100">
                     <MudBadge Class="w-100" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveCategory(category))">
                         <div class="row w-100 justify-content-between ml-1 px-2 py-1 avante dark-card surface-color cursor-pointer"
-                        @onclick=@((_) => NavigationManager.NavigateTo($"category/{category.Id}/edit"))>
-                            <div class="col-1">
-                                <MudText Typo="Typo.h5" Class="avante text-white">@(++iter)</MudText>
-                                </div>
-                                <div class="col-10 col-md-11">
-                                    <MudText Typo="Typo.h5" Class="avante text-white">@category.Name</MudText>
+                             @onclick=@((_) => NavigationManager.NavigateTo($"category/{category.Id}/edit"))>
+                            <div class="col-10 col-md-11">
+                                <MudText Typo="Typo.h5" Class="avante text-white">@category.Name</MudText>
                                     <MudText Typo="Typo.body1" Class="avante text-white">@category.Description</MudText>
                                 </div>
 
@@ -107,7 +104,7 @@
                         <div class="col-2 h-100 d-flex align-items-stretch justify-content-center p-1">
                             <div class="bg-white p-1 py-3 avante radius h-100 w-100">
                                 <div class="text-center h4 m-0">
-                                    @(_categories.Select((v, i) => new { category = v, index = i }).First(x => x.category.Id == homeWorksModule.Key).index+1)
+                                    @(_categories.Select((v, i) => new { category = v, index = i }).First(x => x.category.Id == homeWorksModule.Key).index + 1)
                                 </div>
                             </div>
                         </div>
@@ -115,11 +112,11 @@
                         <MudBadge Class="col-10 d-flex" BadgeClass="cursor-pointer" Overlap=true Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="@(_ => RemoveHomework(hw))">
                             <div class="px-2 w-100 py-1 avante dark-card grey-card cursor-pointer" @onclick="(_ => UpdateHomework(hw))">
                                 <MudText Typo="Typo.h6" Class="avante">@hw.Header</MudText>
-                            </div>
-                        </MudBadge>
-                    </div>
+                                </div>
+                            </MudBadge>
+                        </div>
                 }
-                
+
             }
 
             <MudButton Class="shifu-button col-11 avante mt-2" OnClick="OpenHomeWorkAddDialog">Добавить дзшку</MudButton>
@@ -257,12 +254,12 @@
                 this.StateHasChanged();
                 Snackbar.Add("Категория добавлена!", Severity.Success);
             }
-            catch(Refit.ValidationApiException apiExc)
+            catch (Refit.ValidationApiException apiExc)
             {
                 Snackbar.Add("Произошла ошибка!", Severity.Error);
                 await Logger.LogException(apiExc, "Cannot add category");
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Snackbar.Add("Произошла ошибка!", Severity.Error);
                 Logger.LogError(exc, "Cannot add category");
@@ -297,7 +294,7 @@
                 await Logger.LogException(apiExc, "Cannot add Homework");
 
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Snackbar.Add("Произошла ошибка!", Severity.Error);
                 Logger.LogError(exc, "Cannot add Homework");
@@ -338,7 +335,7 @@
 
     public async Task RemoveHomework(HomeWork homeWork)
     {
-        if(!(bool)(await DialogService.ShowMessageBox("Удалить дз", "Вы уверены?", "Да", "Нет")))
+        if (!(bool)(await DialogService.ShowMessageBox("Удалить дз", "Вы уверены?", "Да", "Нет")))
         {
             return;
         }
