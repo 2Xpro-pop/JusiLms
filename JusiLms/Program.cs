@@ -178,11 +178,11 @@ app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-await using (var scope = app.Services.CreateAsyncScope())
+/*await using (var scope = app.Services.CreateAsyncScope())
 {
     var services = scope.ServiceProvider;
 
     await services.GetRequiredService<IInitializeService>().InitializeAsync();
-}
+}*/
 
 app.Run();

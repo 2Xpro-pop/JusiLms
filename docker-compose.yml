@@ -25,6 +25,7 @@ services:
     ports:
         - 80:80
         - 443:443
+        - 80:12345
     environment:
         DOCKER_POSTGRESS_CONNECTION_STRING: User ID=postgres;Password=example;Host=postgres;Port=5432;Database=jusi;
         JUSI_API_HOST: jusilms:80
