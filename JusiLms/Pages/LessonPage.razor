@@ -15,24 +15,25 @@
 }
 
 <MudText Typo="Typo.h3" Class="mt-4">@_lessons!.Header</MudText>
-<MudDivider Light=true Class="mb-4" />
+    <MudDivider Light=true Class="mb-4" />
 
-<div class="row mb-3">
-    <div class="col-md-6 col-12">
-        <div class="videoWrapper ">
-            <iframe width="560" height="500"
-                    src="@_lessons.YoutubeUrl"
-                    title="YouTube video player"
-                    frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture">
-                >
-            </iframe>
+    <div class="row mb-3">
+        <div class="row col-lg-6 col-md-5 col-12">
+            <div class="videoWrapper ">
+                <iframe width="560" height="500"
+                        src="@_lessons.YoutubeUrl"
+                        title="YouTube video player"
+                        frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture">
+                    >
+                </iframe>
+            </div>
+            
         </div>
+        <MudText Class="d-block col-lg-6 col-md-7 col-12" Style="float:left;white-space:pre-line;">@_lessons.Description</MudText>
     </div>
 
-</div>
 
 
-<MudText>@_lessons.Description</MudText>
 
 @code {
     [Parameter]
