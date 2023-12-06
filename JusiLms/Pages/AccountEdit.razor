@@ -29,26 +29,26 @@
 
             <div class="col-7 col-lg-12 pr-2 row small-text justify-content-center align-items-stretch">
                 <MudText Typo="Typo.h4" Class="avante dark-text p-0">@_user.FullName</MudText>
-                <MudText Typo="Typo.h5" Class="avante dark-text large-bottom p-0">@_user.Insta</MudText>
+                    <MudText Typo="Typo.h5" Class="avante dark-text large-bottom p-0">@_user.Insta</MudText>
 
-                <div class="col-12 row w-100 p-0">
-                    <div class="col-6 col-lg-12 p-0">
-                        <MudText Typo="Typo.h6" Class="avante grey-text">Почта:</MudText>
-                        <MudText Typo="Typo.h6" Class="avante grey-text mb-md-3 mb-lg-5">@_user.Email</MudText>
+                    <div class="col-12 row w-100 p-0 overflow-hidden">
+                        <div class="col-6 col-lg-12 p-0">
+                            <MudText Typo="Typo.h6" Class="avante grey-text overflow-hidden">Почта:</MudText>
+                            <MudText Typo="Typo.h6" Class="avante grey-text mb-md-3 mb-lg-5 overflow-hidden">@_user.Email</MudText>
 
-                        <MudText Typo="Typo.h6" Class="avante grey-text">Ник в тг:</MudText>
-                        <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-3 mb-lg-5">@_user.Tg</MudText>
-                    </div>
+                            <MudText Typo="Typo.h6" Class="avante grey-text overflow-hidden">Ник в тг:</MudText>
+                            <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-3 mb-lg-5 overflow-hidden">@_user.Tg</MudText>
+                        </div>
 
-                    <div class="col-6 col-lg-12 p-0">
-                        <MudText Typo="Typo.h6" Class="avante grey-text">Номер телефона:</MudText>
-                        <MudText Typo="Typo.h6" Class="avante grey-text mb-md-3 mb-lg-5">@_user.PhoneNumber</MudText>
+                        <div class="col-6 col-lg-12 p-0">
+                            <MudText Typo="Typo.h6" Class="avante grey-text overflow-hidden">Номер телефона:</MudText>
+                            <MudText Typo="Typo.h6" Class="avante grey-text mb-md-3 mb-lg-5 overflow-hidden">@_user.PhoneNumber</MudText>
 
-                        <MudText Typo="Typo.h6" Class="avante grey-text">номер W/A::</MudText>
-                        <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-3 mb-lg-5">@_user.Wa</MudText>
+                            <MudText Typo="Typo.h6" Class="avante grey-text overflow-hidden">номер W/A::</MudText>
+                            <MudText Typo="Typo.h6" Class="avante grey-text mb-3 mb-md-3 mb-lg-5 overflow-hidden">@_user.Wa</MudText>
+                        </div>
                     </div>
                 </div>
-            </div>
 
         }
 
@@ -90,7 +90,7 @@
                         {
                             was = true;
                             <div class="col-2 h-100 d-flex align-items-center justify-content-center p-1 p-sm-2">
-                                <div class="bg-white p-md-3 pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text" style="border-radius: 4px">
+                                <div class="bg-white p-md-3 pa-1 p-sm-1 py-sm-3 avante radius h-100 w-100 small-text d-flex justify-content-center align-items-center" style="border-radius: 4px">
                                     <h5 class="text-center m-0">
                                         @(_categories.Select((v, i) => new { category = v, index = i }).First(x => x.category.Id == homeWorksModule.Key).index + 1)
                                     </h5>

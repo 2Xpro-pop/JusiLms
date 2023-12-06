@@ -262,8 +262,16 @@ main {
         height: 100%;
     }
 
-@media (max-width: 960px) {
+.small-text {
+    text-overflow: ellipsis;
+}
 
+.mud-typography-h6 {
+    text-overflow: ellipsis;
+    display:block;
+}
+
+@media (max-width: 960px) {
     .large-bottom {
         margin-bottom: 0.65em !important;
     }
@@ -278,6 +286,21 @@ main {
 
     .small-text h6 {
         font-size: 1.17em;
+    }
+}
+
+@media (max-width: 720px) {
+
+    .small-text h4 {
+        font-size: 1.44em;
+    }
+
+    .small-text h5 {
+        font-size: 1.17em;
+    }
+
+    .small-text h6 {
+        font-size: 1.053em;
     }
 }
 
@@ -308,15 +331,15 @@ main {
     }
 
     .small-text h4 {
-        font-size: 1.6em;
+        font-size: 1.296em;
     }
 
     .small-text h5 {
-        font-size: 1.3em;
+        font-size: 1.053em;
     }
 
     .small-text h6 {
-        font-size: 1.17em;
+        font-size: 0.9477em;
     }
 
 }
@@ -324,15 +347,15 @@ main {
 @media (max-width: 500px )
 {
     .small-text h4 {
-        font-size: 1.02em;
+        font-size: 0.918em;
     }
 
     .small-text h5 {
-        font-size: 0.70em;
+        font-size: 0.63em;
     }
 
     .small-text h6 {
-        font-size: 0.56em;
+        font-size: 0.504em;
     }
 }
 
