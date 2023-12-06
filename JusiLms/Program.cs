@@ -20,6 +20,8 @@ using JusiLms.Services.Api;
 using Refit;
 using JusiLms;
 using System.Text.Json.Serialization;
+using Npgsql;
+using JusiLms.Hello;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +40,10 @@ if (!string.IsNullOrWhiteSpace(dockerPostgressConnectionString))
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+{
+    options.UseNpgsql(connectionString)
+           .UseModel(ApplicationDbContextModel.Instance);
+});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddIdentity<User, Role>(options =>
@@ -101,7 +106,7 @@ builder.Services.AddMudServices();
     };
 });*/
 builder.Services.AddHttpClient("cookie")
-    .ConfigurePrimaryHttpMessageHandler(() => 
+    .ConfigurePrimaryHttpMessageHandler(() =>
         new HttpClientHandler
         {
             UseCookies = true,
@@ -130,7 +135,7 @@ builder.Services.AddRefitApi<ICategoryApi>();
 builder.Services.AddRefitApi<IHomeWorksApi>();
 builder.Services.AddRefitApi<ILessonsApi>();
 
-if(builder.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -162,7 +167,7 @@ else
     app.UseHsts();
 }
 
-if(!runningInDocker)
+if (!runningInDocker)
 {
     //app.UseHttpsRedirection();
 }
@@ -178,11 +183,28 @@ app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-await using (var scope = app.Services.CreateAsyncScope())
+try
 {
-    var services = scope.ServiceProvider;
+    await using (var scope = app.Services.CreateAsyncScope())
+    {
+        var services = scope.ServiceProvider;
 
-    await services.GetRequiredService<IInitializeService>().InitializeAsync();
+        await services.GetRequiredService<IInitializeService>().InitializeAsync();
+    }
+}
+catch (NpgsqlException)
+{
+    await Task.Delay(5000);
+    await using (var scope = app.Services.CreateAsyncScope())
+    {
+        var services = scope.ServiceProvider;
+
+        await services.GetRequiredService<IInitializeService>().InitializeAsync();
+    }
+}
+catch
+{
+
 }
 
 app.Run();
